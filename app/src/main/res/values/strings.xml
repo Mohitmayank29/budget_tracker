@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">jetpack1</string>
     <string name="hello">Hello</string>
+    <string name="Budget">Budget</string>
+    <string name="change_language">Budget</string>
+    <string name="english">English</string>
+    <string name="hindi">Hindi</string>
+    <string name="marathi">Marathi</string>
+
 </resources>
+

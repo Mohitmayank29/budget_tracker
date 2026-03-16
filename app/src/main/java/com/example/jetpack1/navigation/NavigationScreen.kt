@@ -1,5 +1,7 @@
 package com.example.jetpack1.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,10 +14,11 @@ import com.example.jetpack1.screens.Dashboard.ProfileScreen
 import com.example.jetpack1.screens.Login.RegisterScreen
 import com.example.jetpack1.screens.SplashScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationScreen() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = navroute.Splash.route)  {
+    NavHost(navController, startDestination = navroute.Dashboard.route)  {
         composable(navroute.Splash.route) {
             SplashScreen(navController)
         }

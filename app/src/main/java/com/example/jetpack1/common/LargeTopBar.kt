@@ -35,14 +35,10 @@ fun DashboardTopBar(
     title:String,
     scrollBehavior: TopAppBarScrollBehavior,
     userName: String = "Anubhav",
-    isLarge: Boolean = false,
-    onBackClick: (() -> Unit) = {},
     onMenuClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {}
 ) {
-
-  if (isLarge) {
-      LargeTopAppBar(
+     LargeTopAppBar(
           scrollBehavior = scrollBehavior,
           colors = TopAppBarDefaults.largeTopAppBarColors(
               containerColor = MaterialTheme.colorScheme.surface,
@@ -95,24 +91,31 @@ fun DashboardTopBar(
                   )
               }
           }
-      )
-  }else{
-      TopAppBar(
-          title = {
-              Text(
-                  text = title,
-                  fontWeight = FontWeight.SemiBold
-              )
-          },
-          navigationIcon = {
-              IconButton(onClick = onBackClick) {
-                  Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
-              }
-          }
-      )
-  }
+     )
 }
 
+@Composable
+fun CommonTopbar(
+    title: String,
+    onbackclick: () -> Unit,
+) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                fontWeight = FontWeight.SemiBold,
+                color = NegativeRed,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onbackclick) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+            }
+        }
+    )
+}
 @Preview
 @Composable
 private fun PreviewDashboardTopBar() {
@@ -123,7 +126,7 @@ private fun PreviewDashboardTopBar() {
         title = "",
         scrollBehavior = scrollBehavior,
         userName = "Anubhav",
-        isLarge = true )
+        )
 
 }
 

@@ -18,12 +18,6 @@ import javax.inject.Inject
 class LanguageViewModel @Inject constructor(
         private val languageDataStore: LanguageDataStore
     ) : ViewModel() {
-    val language = languageDataStore.languageFlow.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        "en"
-    )
-
     fun changeLanguage(lang: String) {
 
         viewModelScope.launch {
@@ -35,12 +29,11 @@ class LanguageViewModel @Inject constructor(
             AppCompatDelegate.setApplicationLocales(locale)
 
         }
-
     }
         val selectedLanguage = languageDataStore.languageFlow
             .stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(),
+                SharingStarted.WhileSubscribed(5000),
                 "en"
             )
 

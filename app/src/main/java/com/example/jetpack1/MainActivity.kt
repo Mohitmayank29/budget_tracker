@@ -1,11 +1,15 @@
 package com.example.jetpack1
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,22 +24,21 @@ import com.example.jetpack1.navigation.NavigationScreen
 import com.example.jetpack1.ui.theme.Jetpack1Theme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    lateinit var languageDataStore: LanguageDataStore
 
+    @Inject
+    lateinit var languageDataStore: LanguageDataStore
+    @SuppressLint("SuspiciousIndentation")
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        lifecycleScope.launch {
-            languageDataStore = LanguageDataStore(this@MainActivity)
-            languageDataStore.languageFlow.collect { language ->
-                    val locale = LocaleListCompat.forLanguageTags(language)
-                    AppCompatDelegate.setApplicationLocales(locale)
-            }
-        }
         setContent {
             Jetpack1Theme {
                 // A surface container using the 'background' color from the theme
@@ -45,5 +48,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    private fun applyLanguage(language: String) {
+        val locale = LocaleListCompat.forLanguageTags(language)
+        AppCompatDelegate.setApplicationLocales(locale)
+    }
+
 }
 

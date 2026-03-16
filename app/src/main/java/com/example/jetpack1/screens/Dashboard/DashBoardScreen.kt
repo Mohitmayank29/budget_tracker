@@ -73,17 +73,19 @@ import com.example.jetpack1.ui.theme.TextSecondary
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import android.util.Log
+import androidx.compose.ui.platform.LocalConfiguration
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController)  {
+    val configuration = LocalConfiguration.current
     val context = LocalContext.current
-
     val database = remember {
         AppDatabase.getInstance(context)
     }
-
     val repository = remember {
         BudgetRepository(
             transactionDao = database.transactionDao(),
@@ -101,20 +103,17 @@ fun DashboardScreen(navController: NavController)  {
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
             rememberTopAppBarState()
         )
-    val title = Text(text = stringResource(R.string.hello))
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DashboardTopBar(
-                title = title.toString(),
+                title = stringResource(R.string.Budget),
                 scrollBehavior = scrollBehavior,
                 userName = "Mohit Kumar",
                 onMenuClick = { navController.navigate(navroute.Profile.route) },
                 onNotificationClick = { navController.navigate(navroute.language.route) },
-                isLarge = true
             )
         }
-
     ){
         innerPadding ->
         HomeScreen(
@@ -122,16 +121,13 @@ fun DashboardScreen(navController: NavController)  {
             navController = navController,
             viewModel = viewModel
         )
-
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewModel: BudgetViewModel) {
     val state by viewModel.uiState.collectAsState()
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -169,7 +165,6 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
                 }
             }
         }
-
         // Balance card
         item {
             BalanceCard(state = state, onSetIncomeClick = { })
@@ -194,7 +189,6 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
             }
             item { Spacer(Modifier.height(8.dp)) }
         }
-
         // Recent transactions
         item {
             Row(
@@ -217,7 +211,6 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
                 }
             }
         }
-
         if (state.transactions.isEmpty()) {
             item {
                 Box(
@@ -368,7 +361,7 @@ fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
             .padding(24.dp)
     ) {
         Column {
-            Text("BALANCE", color = TextSecondary.copy(alpha = 0.7f), fontSize = 11.sp, letterSpacing = 1.sp)
+            Text(stringResource(R.string.hello), color = TextSecondary.copy(alpha = 0.7f), fontSize = 11.sp, letterSpacing = 1.sp)
             Text(
                 formatCurrency(state.balance),
                 color = if (state.balance >= 0) TextPrimary else NegativeRed,
@@ -512,7 +505,7 @@ fun TransactionRow(transaction: Transaction, onDelete: () -> Unit) {
                 .background(catColor.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
         ) {
-            Text(transaction.category.emoji, fontSize = 18.sp)
+            Text(transaction.category.  emoji, fontSize = 18.sp)
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(

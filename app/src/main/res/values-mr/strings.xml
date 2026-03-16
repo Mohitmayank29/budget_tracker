@@ -1,4 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">jetpack1</string>
-    <string name="hello">नमस्ते</string>
+    <string name="hello">नमस्कार</string>
+    <string name="Budget">बजेट</string>
+    <string name="change_language">बजेट</string>
+    <string name="english">इंग्रजी</string>
+    <string name="hindi">हिंदी</string>
+    <string name="marathi">मराठी</string>
 </resources>
