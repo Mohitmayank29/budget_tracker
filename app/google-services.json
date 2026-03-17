@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1056077928296",
+    "project_id": "budgettracker029",
+    "storage_bucket": "budgettracker029.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056077928296:android:15cf00590ad3b2711368dd",
+        "android_client_info": {
+          "package_name": "com.example.jetpack1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056077928296-4qdcfj00kgviclb3ltmevgdk90crqjpk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmmHosbfgRMg-6fU9UI4va-vkJO0atzto"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056077928296-4qdcfj00kgviclb3ltmevgdk90crqjpk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

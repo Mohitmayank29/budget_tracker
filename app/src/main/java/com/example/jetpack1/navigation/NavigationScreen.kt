@@ -18,7 +18,7 @@ import com.example.jetpack1.screens.SplashScreen
 @Composable
 fun NavigationScreen() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = navroute.Dashboard.route)  {
+    NavHost(navController, startDestination = navroute.Splash.route)  {
         composable(navroute.Splash.route) {
             SplashScreen(navController)
         }

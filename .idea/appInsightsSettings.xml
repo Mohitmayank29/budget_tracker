@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.jetpack1" />
+                  <option name="mobileSdkAppId" value="1:1056077928296:android:15cf00590ad3b2711368dd" />
+                  <option name="projectId" value="budgettracker029" />
+                  <option name="projectNumber" value="1056077928296" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

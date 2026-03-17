@@ -15,11 +15,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,23 +35,42 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.navigation.navroute
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController,viewmodel: LoginViewmodel = hiltViewModel()) {
+
 
     val context = LocalContext.current
-    val username = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    var useremail by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var state =  viewmodel.dataOrException.value
+
 
     Surface(Modifier
         .fillMaxSize()
         .background(Color.White)
         .navigationBarsPadding()
     ) {
+        when {
+            state.loading ->{
+                CircularProgressIndicator()
+            }
+            state.data != null ->{
+                LaunchedEffect(Unit){
+                    navController.navigate(navroute.Dashboard.route)
+                }
+
+            }
+            else ->{
+                state.e?.message
+            }
+
+        }
         Column(
             Modifier.fillMaxSize()
         ) {
@@ -86,8 +109,8 @@ fun LoginScreen(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         CommonOutlinedTextField(
-                            value = username.value,
-                            onValueChange = { username.value = it },
+                            value = useremail,
+                            onValueChange = { useremail = it },
                             label = "Username",
                             placeholder = "Enter Username",
                             modifier = Modifier.fillMaxWidth()
@@ -98,15 +121,23 @@ fun LoginScreen(navController: NavController) {
 //                            textDecoration = TextDecoration.Underline,
 //                            textAlign = TextAlign.Left)
                         CommonOutlinedTextField(
-                            value = password.value,
-                            onValueChange = { password.value = it },
+                            value = password,
+                            onValueChange = { password = it },
                             label = "Password",
                             placeholder = "Enter Password",
                             modifier = Modifier.fillMaxWidth(),
                             isPassword = true
                         )
                         CommonButton(text = "Login",
-                            onClick = { navController.navigate(navroute.Dashboard.route) },
+                            onClick = {
+                                viewmodel.getlogin(useremail,password)
+                            },
+
+                        )
+                        CommonButton(text = "Gooogle",
+                            onClick = {
+                                viewmodel.signinwithgoogle(context)
+                            },
 
                         )
                     }
