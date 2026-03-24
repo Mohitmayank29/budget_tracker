@@ -1,6 +1,8 @@
 package com.example.jetpack1.screens.Login
 
+import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat.getString
 import androidx.credentials.CredentialManager
@@ -12,6 +14,7 @@ import com.example.jetpack1.data.DataOrException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -24,26 +27,32 @@ class LoginViewmodel  @Inject constructor(
         DataOrException<AuthResult,Exception>()
     )
     private set
-    fun signinwithgoogle(context: Context) {
-
+    fun signinwithgoogle(activity: Activity) {
+        Log.d("LOGIN_DEBUG", "Function Called")
         val googleIdOption = GetGoogleIdOption.Builder()
-            .setServerClientId(context.getString(R.string.default_web_client_id))
+            .setServerClientId(activity.getString(R.string.default_web_client_id))
             .setFilterByAuthorizedAccounts(false) // IMPORTANT
+            .setAutoSelectEnabled(false) // 🔥 ADD THIS
             .build()
 
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
 
-        val credentialManager = CredentialManager.create(context)
+        val credentialManager = CredentialManager.create(activity)
 
         viewModelScope.launch {
             try {
                 dataOrException.value = dataOrException.value.copy(loading = true)
 
-                val result = credentialManager.getCredential(context, request)
+                    Log.d("LOGIN_DEBUG", "Before getCredential")
 
-                val credential = result.credential
+                    val result = credentialManager.getCredential(activity, request)
+                    val credential = result.credential
+
+                    Log.d("LOGIN_DEBUG", "After getCredential")
+
+
 
                 if (credential is androidx.credentials.CustomCredential &&
                     credential.type == com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -66,26 +75,49 @@ class LoginViewmodel  @Inject constructor(
             }
         }
     }
+//    private fun firebaseAuthWithGoogle(idToken: String) {
+//        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+//
+//        viewModelScope.launch {
+//            try {
+//                val result = auth.signInWithCredential(firebaseCredential).await()
+//
+//                dataOrException.value = dataOrException.value.copy(
+//                    data = result,
+//                    loading = false
+//                )
+//                Log.d("LOGIN_DEBUG", "Firebase Auth Success")
+//                val userdata = auth.currentUser
+//                Log.d("LOGIN_DEBUG", result.toString())
+//                Log.d("LOGIN_DEBUG",userdata.toString())
+//                Log.d("LOGIN_DEBUG", dataOrException.value.data.toString())
+//
+//            } catch (e: Exception) {
+//                dataOrException.value = dataOrException.value.copy(
+//                    e = e,
+//                    loading = false
+//                )
+//            }
+//        }
+//    }
     private fun firebaseAuthWithGoogle(idToken: String) {
-        val firebaseCredential =
-            com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
-
-        viewModelScope.launch {
-            try {
-                val result = auth.signInWithCredential(firebaseCredential).await()
-
-                dataOrException.value = dataOrException.value.copy(
-                    data = result,
-                    loading = false
-                )
-
-            } catch (e: Exception) {
-                dataOrException.value = dataOrException.value.copy(
-                    e = e,
-                    loading = false
-                )
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("TAG", "signInWithCredential:success")
+                    val user = auth.currentUser?.displayName.toString()
+//                     task.result.user
+                    Log.d("TAG", user)
+                    Log.d("TAG", task.result.user.toString())
+//                    updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user
+                    Log.w("TAG", "signInWithCredential:failure", task.exception)
+//                    updateUI(null)
+                }
             }
-        }
     }
     fun getlogin(email:String,password:String){
         try{

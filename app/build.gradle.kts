@@ -81,16 +81,14 @@
         implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
         //FIRBASE
         implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
-        implementation("com.google.firebase:firebase-analytics")
+//        implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-auth")
         // Also add the dependencies for the Credential Manager libraries and specify their versions
         implementation("androidx.credentials:credentials:1.3.0")
         implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
         // Google ID
         implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-        implementation("com.google.android.gms:play-services-auth:21.0.1")
-
-
+//        implementation("com.google.android.gms:play-services-auth:20.7.0")
         // Coroutine
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     }

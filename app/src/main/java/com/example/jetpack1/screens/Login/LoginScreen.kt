@@ -1,5 +1,7 @@
 package com.example.jetpack1.screens.Login
 
+import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +47,7 @@ import com.example.jetpack1.navigation.navroute
 fun LoginScreen(navController: NavController,viewmodel: LoginViewmodel = hiltViewModel()) {
 
 
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     var useremail by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var state =  viewmodel.dataOrException.value
@@ -136,7 +138,9 @@ fun LoginScreen(navController: NavController,viewmodel: LoginViewmodel = hiltVie
                         )
                         CommonButton(text = "Gooogle",
                             onClick = {
-                                viewmodel.signinwithgoogle(context)
+                                Log.d("LOGIN_DEBUG", "Button Clicked")
+
+                                viewmodel.signinwithgoogle(activity)
                             },
 
                         )
