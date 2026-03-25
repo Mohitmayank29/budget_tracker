@@ -1,0 +1,35 @@
+package com.example.jetpack1.screens.splashScreen
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.jetpack1.datastore.PreferencesDataStore
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+class SplashViewModel @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val preferencesDataStore: PreferencesDataStore
+) : ViewModel() {
+    private var isUserLoggedIn = false
+    private var isLanguageSelected = false
+
+    private val _loginstatus = mutableStateOf("")
+    val loginstatus = _loginstatus
+
+    suspend fun getPreferencesData(key: String): String {
+        return preferencesDataStore.getPreferenceDataStore(key).first()
+    }
+    fun getPreferencestatus(key: String) {
+        viewModelScope.launch {
+            _loginstatus.value = getPreferencesData(key)
+        }
+    }
+    fun isUserLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
+
+
+}

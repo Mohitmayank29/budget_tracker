@@ -74,10 +74,14 @@
         implementation("com.squareup.retrofit2:retrofit:2.9.0")
         // data store preference
         implementation("androidx.appcompat:appcompat:1.6.1")
-        implementation("androidx.datastore:datastore-preferences:1.0.0")
+        implementation("androidx.security:security-crypto:1.1.0-alpha06")
+//        implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.0.0"))
+        implementation("androidx.datastore:datastore-preferences:1.2.0-alpha01")
+        implementation("androidx.datastore:datastore-core-android:1.1.4")
+        implementation("androidx.datastore:datastore-preferences:1.1.4")
         //hiltviewmodel
-        implementation ("com.google.dagger:hilt-android:2.48")
-        ksp("com.google.dagger:hilt-compiler:2.48")
+        implementation ("com.google.dagger:hilt-android:2.51.1")
+        ksp("com.google.dagger:hilt-compiler:2.51.1")
         implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
         //FIRBASE
         implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
@@ -91,4 +95,8 @@
 //        implementation("com.google.android.gms:play-services-auth:20.7.0")
         // Coroutine
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+        //COIL IMAGE
+        implementation ("io.coil-kt:coil-compose:2.5.0")
+       // lottiee
+        implementation("com.airbnb.android:lottie-compose:6.0.0")
     }

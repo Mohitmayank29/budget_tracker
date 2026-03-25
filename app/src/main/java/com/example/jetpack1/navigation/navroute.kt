@@ -3,7 +3,8 @@ package com.example.jetpack1.navigation
 sealed class navroute(val route : String) {
        object Splash : navroute("splash")
        object Login : navroute("login")
-       object Register : navroute("register")
+       object signup : navroute("register")
+       object loginsignup : navroute("loginsignup")
        object Dashboard : navroute("dashboard")
        object Profile : navroute("profile")
        object Settings : navroute("settings")

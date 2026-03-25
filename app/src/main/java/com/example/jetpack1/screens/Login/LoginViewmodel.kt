@@ -1,5 +1,6 @@
 package com.example.jetpack1.screens.Login
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpack1.R
 import com.example.jetpack1.data.DataOrException
+import com.example.jetpack1.datastore.PreferencesDataStore
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +23,9 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 @HiltViewModel
 class LoginViewmodel  @Inject constructor(
-    private val auth : FirebaseAuth): ViewModel() {
+    private val auth : FirebaseAuth,
+    private val preferencesDataStore: PreferencesDataStore
+): ViewModel() {
 
     var dataOrException = mutableStateOf(
         DataOrException<AuthResult,Exception>()
@@ -107,10 +111,46 @@ class LoginViewmodel  @Inject constructor(
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("TAG", "signInWithCredential:success")
-                    val user = auth.currentUser?.displayName.toString()
+                    val user = auth.currentUser
 //                     task.result.user
-                    Log.d("TAG", user)
+                    Log.d("TAG", "${user?.displayName}")
                     Log.d("TAG", task.result.user.toString())
+                    Log.d("sdfn", user?.providerData.toString())
+                    Log.d("TAG", "${user?.email}")
+                    Log.d("TAG", "${user?.phoneNumber}")
+                    Log.d("TAG", "${user?.tenantId}")
+                    Log.d("TAG", "${user?.getIdToken(true)?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("TAG", "Token: ${task.result.token}")
+                        } else {
+                            Log.d("TAG", "Error: ${task.exception}")
+                        }
+                    
+                    }}")
+                     val usergeneratedtoken  =user?.getIdToken(true)?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("TAG", "Token: ${task.result.token}")
+                        } else {
+                            Log.d("TAG", "Error: ${task.exception}")
+                        }
+
+                    }
+                    viewModelScope.launch {
+                        preferencesDataStore.setPreferenceDataStore(
+                            PreferencesDataStore.usergeneratedtoekn,
+                            usergeneratedtoken.toString()
+                        )
+                    }
+                    val providers = user?.providerData
+                    providers?.forEach { profile ->
+                        Log.d("TAG", "Provider ID: ${profile.providerId}")
+                        Log.d("TAG", "UID: ${profile.uid}")
+                        Log.d("TAG", "Name: ${profile.displayName}")
+                        Log.d("TAG", "Email: ${profile.email}")
+                        Log.d("TAG", "Photo URL: ${profile.photoUrl}")
+                        Log.d("TAG", "Photo URL: ${profile.phoneNumber}")
+                    }
+
 //                    updateUI(user)
                 } else {
                     // If sign in fails, display a message to the user
@@ -119,7 +159,8 @@ class LoginViewmodel  @Inject constructor(
                 }
             }
     }
-    fun getlogin(email:String,password:String){
+    @SuppressLint("SuspiciousIndentation")
+    fun getlogin(email:String, password:String){
         try{
         dataOrException.value = dataOrException.value.copy(loading = true)
              viewModelScope.launch {

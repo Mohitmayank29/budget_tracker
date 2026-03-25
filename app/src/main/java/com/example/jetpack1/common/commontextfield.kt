@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -47,7 +49,7 @@ fun CommonOutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             label = { Text(label) },
-            placeholder = {Text(placeholder)},
+            placeholder = {Text(placeholder, color = Color.White)},
             singleLine = singleLine,
             isError = isError,
             leadingIcon = leadingIcon?.let {
@@ -76,7 +78,38 @@ fun CommonOutlinedTextField(
                 keyboardType = keyboardType
             ),
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White,
+                focusedLeadingIconColor = Color.White,
+                unfocusedLeadingIconColor = Color.White,
+                focusedTrailingIconColor = Color.White,
+                unfocusedTrailingIconColor = Color.White,
+                focusedPlaceholderColor = Color.White,
+                unfocusedPlaceholderColor = Color.White,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                cursorColor = Color.White,
+                errorCursorColor = Color.Red,
+                errorBorderColor = Color.Red,
+                errorLeadingIconColor = Color.Red,
+                errorTrailingIconColor = Color.Red,
+                errorLabelColor = Color.Red,
+                errorPlaceholderColor = Color.Red,
+                disabledBorderColor = Color.Yellow,
+                disabledLeadingIconColor = Color.Yellow,
+                disabledTrailingIconColor = Color.Yellow,
+                disabledPlaceholderColor = Color.Yellow,
+                disabledTextColor = Color.Yellow,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White,
+                focusedPrefixColor = Color.Yellow,
+                unfocusedPrefixColor = Color.White,
+                focusedSuffixColor = Color.Yellow,
+                unfocusedSuffixColor = Color.White,
+
+            )
         )
 
         if (isError && errorMessage != null) {
