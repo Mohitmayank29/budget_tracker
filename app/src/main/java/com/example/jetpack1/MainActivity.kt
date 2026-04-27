@@ -30,7 +30,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class  MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var languageDataStore: LanguageDataStore
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             Jetpack1Theme {
                 // A surface container using the 'background' color from the theme
                 Surface(Modifier.fillMaxSize().background(Color.White)) {
-                    NavigationScreen()
+                    NavigationScreen(modifier= Modifier)
                 }
             }
         }

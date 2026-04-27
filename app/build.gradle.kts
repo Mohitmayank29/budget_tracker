@@ -36,6 +36,8 @@
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_11
             targetCompatibility = JavaVersion.VERSION_11
+            isCoreLibraryDesugaringEnabled = true
+
         }
         kotlinOptions {
             jvmTarget = "11"
@@ -99,4 +101,8 @@
         implementation ("io.coil-kt:coil-compose:2.5.0")
        // lottiee
         implementation("com.airbnb.android:lottie-compose:6.0.0")
+        //material 3
+        implementation("androidx.compose.material3:material3:1.2.1")
+        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
     }

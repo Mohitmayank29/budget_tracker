@@ -9,7 +9,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import okhttp3.Address
 import javax.inject.Inject
 
 class PreferencesDataStore @Inject constructor(@ApplicationContext private val  context: Context){
@@ -29,6 +28,8 @@ class PreferencesDataStore @Inject constructor(@ApplicationContext private val  
         const val commonuserEmailId = "commonuserEmailId"
         const val commonStudentContactNo = "commonStudentContactNo"
         const val usergeneratedtoekn = "usergeneratedtoekn"
+        const val signupemail = "signupemail"
+        const val signuppassword = "usergeneratedtoekn"
 
 
 

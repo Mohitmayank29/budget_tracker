@@ -1,5 +1,7 @@
 package com.example.jetpack1.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,11 +38,12 @@ import java.time.format.DateTimeFormatter
 
 // --- History Screen ---
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HistoryScreen(
     state: UiState,
     onBack: () -> Unit,
-    onDeleteTransaction: (Long) -> Unit
+    onDeleteTransaction: (Int) -> Unit
 ) {
     val monthLabel = state.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
     Column(

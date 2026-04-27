@@ -1,5 +1,6 @@
 package com.budget.tracker.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
@@ -20,17 +21,6 @@ enum class Category(
     OTHER("Other", "📦", 0xFF98C1D9)
 }
 
-@Entity(tableName = "transactions")
-data class Transaction(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val amount: Double,
-    val label: String,
-    val category: Category,
-    val type: TransactionType,
-    val date: LocalDate,
-    val year: Int = date.year,
-    val month: Int = date.monthValue
-)
 
 data class MonthlyIncome(
     val year: Int,

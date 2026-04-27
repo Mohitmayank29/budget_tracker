@@ -50,10 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.budget.tracker.data.AppDatabase
-import com.budget.tracker.data.BudgetRepository
+import com.example.jetpack1.data.BudgetRepository
 import com.budget.tracker.data.Category
-import com.budget.tracker.data.Transaction
 import com.budget.tracker.data.TransactionType
 import com.budget.tracker.viewmodel.BudgetViewModel
 import com.budget.tracker.viewmodel.BudgetViewModelFactory
@@ -73,8 +71,11 @@ import com.example.jetpack1.ui.theme.TextSecondary
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import android.util.Log
 import androidx.compose.ui.platform.LocalConfiguration
+import com.example.jetpack1.Database.BudgetDatabase
+import com.example.jetpack1.Database.Table.TransactionTable
+import com.example.jetpack1.common.BottomNavigationBar
+import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -84,11 +85,11 @@ fun DashboardScreen(navController: NavController)  {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
     val database = remember {
-        AppDatabase.getInstance(context)
+        BudgetDatabase.getInstance(context)
     }
     val repository = remember {
         BudgetRepository(
-            transactionDao = database.transactionDao(),
+            transactionDao = database.transactiobDao(),
             budgetDao = database.budgetDao(),
             incomeDao = database.incomeDao()
         )
@@ -113,6 +114,9 @@ fun DashboardScreen(navController: NavController)  {
                 onMenuClick = { navController.navigate(navroute.Profile.route) },
                 onNotificationClick = { navController.navigate(navroute.language.route) },
             )
+        },
+        bottomBar = {
+            BottomNavigationBar()
         }
     ){
         innerPadding ->
@@ -149,7 +153,9 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+//                        navController.navigate()
+                    }) {
                         Text("‹", color = TextSecondary, fontSize = 24.sp, fontWeight = FontWeight.Light)
                     }
                     Text(
@@ -411,7 +417,7 @@ fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 4.dp)
                     )
-                    val count = state.transactions.count { it.type == TransactionType.EXPENSE }
+                    val count = state.transactions.count { TransactionType.valueOf(it.type) == TransactionType.EXPENSE }
                     Text("$count transactions", color = TextMuted, fontSize = 11.sp, modifier = Modifier.padding(top = 4.dp))
                 }
             }
@@ -483,9 +489,12 @@ fun CategoryRow(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TransactionRow(transaction: Transaction, onDelete: () -> Unit) {
-    val catColor = Color(transaction.category.colorHex)
+fun TransactionRow(transaction: TransactionTable, onDelete: () -> Unit) {
+    val categoryEnum = Category.valueOf(transaction.category)
+    val catColor = Color(categoryEnum.colorHex)
     var showDelete by remember { mutableStateOf(false) }
+    val date = LocalDate.ofEpochDay(transaction.date)
+    val typeEnum = TransactionType.valueOf(transaction.type)
 
     Row(
         modifier = Modifier
@@ -505,7 +514,7 @@ fun TransactionRow(transaction: Transaction, onDelete: () -> Unit) {
                 .background(catColor.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
         ) {
-            Text(transaction.category.  emoji, fontSize = 18.sp)
+            Text(categoryEnum.emoji, fontSize = 18.sp)
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -517,15 +526,15 @@ fun TransactionRow(transaction: Transaction, onDelete: () -> Unit) {
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                transaction.date.format(DateTimeFormatter.ofPattern("d MMM")),
+                date.format(DateTimeFormatter.ofPattern("d MMM")),
                 color = TextMuted,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
         Text(
-            "${if (transaction.type == TransactionType.INCOME) "+" else "-"}${formatCurrency(transaction.amount)}",
-            color = if (transaction.type == TransactionType.INCOME) PositiveGreen else NegativeRed,
+            "${if (typeEnum == TransactionType.INCOME) "+" else "-"}${formatCurrency(transaction.amount)}",
+            color = if (typeEnum == TransactionType.INCOME) PositiveGreen else NegativeRed,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold
         )

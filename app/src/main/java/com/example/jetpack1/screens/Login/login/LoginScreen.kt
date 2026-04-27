@@ -1,6 +1,6 @@
-package com.example.jetpack1.screens.Login
+package com.example.jetpack1.screens.Login.login
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,14 +37,15 @@ import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.navigation.navroute
+import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
 
+@SuppressLint("ContextCastToActivity")
 @Composable
-fun LoginFormScreen(
+fun LoginScreen(
     navController: NavController,
-    viewmodel: LoginViewmodel = hiltViewModel()
+    viewmodel: LoginSignupViewmodel = hiltViewModel()
 ) {
 
-    val activity = LocalContext.current as Activity
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
