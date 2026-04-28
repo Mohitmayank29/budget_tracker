@@ -1,6 +1,7 @@
 package com.example.jetpack1.datastore
 
 import android.content.Context
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 object PreferencesEncryptedShared {
@@ -9,17 +10,23 @@ object PreferencesEncryptedShared {
     private var securePrefs: EncryptedSharedPreferences? = null
 
     fun init(context: Context) {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        try {
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
 
-        securePrefs = EncryptedSharedPreferences.create(
-            context,
-            "secure_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        ) as EncryptedSharedPreferences?
+            securePrefs = EncryptedSharedPreferences.create(
+                context,
+                "secure_prefs",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            ) as EncryptedSharedPreferences?
+        }catch (e: Exception) {
+            Log.e("SECURE_PREF", "Encryption failed, fallback to normal prefs")
+
+            securePrefs = null
+        }
     }
 
     fun setPreferenceEncryptedShared(key: String,value: String) {

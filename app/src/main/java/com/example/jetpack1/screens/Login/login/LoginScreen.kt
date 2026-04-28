@@ -17,8 +17,11 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,11 +34,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.Preferences
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.jetpack1.Constants.SnackbarManager
+import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
+import com.example.jetpack1.data.ApiResult
+import com.example.jetpack1.datastore.PreferencesDataStore
 import com.example.jetpack1.navigation.navroute
 import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
 
@@ -43,12 +51,42 @@ import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewmodel: LoginSignupViewmodel = hiltViewModel()
+    emailarg: String,
+    viewmodel: LoginViewModel = hiltViewModel()
 ) {
-
-    var email by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf(emailarg) }
     var password by remember { mutableStateOf("") }
+    val state = viewmodel.state.collectAsState()
+    val result = state.value
+//    LaunchedEffect(Unit) {
+//         viewmodel.getPreferencesData(PreferencesDataStore.signupemail).let {email = it}
+//
+//    }
+    LaunchedEffect(result) {
+    when(result) {
+        is ApiResult.Loading -> {
+        }
 
+        is ApiResult.Success -> {
+            SnackbarManager.showMessage("Login successfully! ")
+            navController.navigate(navroute.Dashboard.route) {
+                popUpTo(navroute.Login.route) { inclusive = true }
+            }
+        }
+
+        is ApiResult.Error -> {
+            val message = result.message
+            SnackbarManager.showMessage(message)
+        }
+
+        else -> {
+            SnackbarManager.showMessage(constants.SomethingWentWrong)
+        }
+    }
+    }
+    if(result is ApiResult.Loading){
+        CircularProgressIndicator()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -18,6 +18,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -28,9 +30,8 @@ class LoginSignupViewmodel  @Inject constructor(
     private val preferencesDataStore: PreferencesDataStore
 ): ViewModel() {
 
-    var state = mutableStateOf<ApiResult<AuthResult>>(ApiResult.Loading())
-
-    private set
+    private val _state = MutableStateFlow<ApiResult<AuthResult>?>(null)
+    val  state : StateFlow<ApiResult<AuthResult>?> = _state
     fun signinwithgoogle(activity: Activity) {
         Log.d("LOGIN_DEBUG", "Function Called")
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -47,7 +48,7 @@ class LoginSignupViewmodel  @Inject constructor(
 
         viewModelScope.launch {
             try {
-                state.value = ApiResult.Loading()
+                _state.value = ApiResult.Loading()
 
                     Log.d("LOGIN_DEBUG", "Before getCredential")
 
@@ -68,10 +69,13 @@ class LoginSignupViewmodel  @Inject constructor(
                     val idToken = googleCredential.idToken
 
                     firebaseAuthWithGoogle(idToken)
+                }else {
+                    _state.value = ApiResult.Error("Invalid credential type")
                 }
 
             } catch (e: Exception) {
-                state.value = ApiResult.Error(e.message ?: "Some Error")
+                Log.e("LOGIN_DEBUG", "Google Sign-In Error: ${e.message}", e)
+                _state.value = ApiResult.Error(e.message ?: "Some Error")
             }
         }
     }
@@ -106,44 +110,49 @@ private fun firebaseAuthWithGoogle(idToken: String) {
     viewModelScope.launch {
         try {
             val result = auth.signInWithCredential(credential).await()
-
+            // Get fresh token
             val user = result.user
-            state.value = ApiResult.Success(result)
+            user?.getIdToken(true)?.addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    val token = task.result?.token
+                    Log.d("TAG", "Token: $token")
 
-            val tokenResult = user?.getIdToken(true)?.await()
-            val token = tokenResult?.token
-
-            Log.d("TAG", "Token: $token")
-
-            preferencesDataStore.setPreferenceDataStore(
-                PreferencesDataStore.usergeneratedtoekn,
-                token ?: ""
-            )
+                    viewModelScope.launch {
+                        preferencesDataStore.setPreferenceDataStore(
+                            PreferencesDataStore.usergeneratedtoekn,
+                            token ?: ""
+                        )
+                    }
+                }
+            }
+           _state.value = ApiResult.Success(result)
 
         } catch (e: Exception) {
             Log.d("TAG", "Error: ${e.message}")
+            Log.e("TAG", "Firebase Auth Error: ${e.message}", e)
+            _state.value = ApiResult.Error(e.message ?: "Firebase Authentication Failed")
         }
     }
 }
-    @SuppressLint("SuspiciousIndentation")
-    fun getlogin(email:String, password:String){
-        try{
-        state.value = ApiResult.Loading()
-             viewModelScope.launch {
-                 val result = auth.signInWithEmailAndPassword(email,password).await()
-
-
-                 state.value = ApiResult.Success(result)
-
-
-
-             }
-        }catch (ex: Exception){
-           state.value = ApiResult.Error(
-               ex.message ?: "error"
-           )
-        }
-
-    }
+//    @SuppressLint("SuspiciousIndentation")
+//    fun getlogin(email:String, password:String){
+//        try{
+//        _state.value = ApiResult.Loading()
+//             viewModelScope.launch {
+//                 val result = auth.signInWithEmailAndPassword(email,password).await()
+//
+//
+//                 _state.value = ApiResult.Success(result)
+//
+//
+//
+//             }
+//        }catch (ex: Exception){
+//           _state.value = ApiResult.Error(
+//               ex.message ?: "error"
+//           )
+//        }
+//
+//    }
 
 }

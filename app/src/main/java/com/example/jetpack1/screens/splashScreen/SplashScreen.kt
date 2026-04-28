@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -43,12 +44,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController,splashViewModel: SplashViewModel = hiltViewModel()) {
 
     val logoScale = remember { Animatable(0.5f) }
     val logoAlpha = remember { Animatable(0f) }
     val textOffset = remember { Animatable(200f) }
     val lightOffset = remember { Animatable(500f) }
+
 
     LaunchedEffect(Unit) {
 
@@ -70,12 +72,19 @@ fun SplashScreen(navController: NavController) {
             targetValue = 0f,
             animationSpec = tween(800)
         )
+        val isloggedIn  =  splashViewModel.isUserLoggedIn()
 
         delay(800)
-
-        navController.navigate(navroute.loginsignup.route) {
-            popUpTo(navroute.Splash.route) { inclusive = true }
+        if(isloggedIn) {
+            navController.navigate(navroute.Dashboard.route) {
+                popUpTo(navroute.Splash.route) { inclusive = true }
+            }
+        }else{
+            navController.navigate(navroute.loginsignup.route){
+                popUpTo(navroute.Splash.route){ inclusive = true}
+            }
         }
+
     }
 
     Box(
