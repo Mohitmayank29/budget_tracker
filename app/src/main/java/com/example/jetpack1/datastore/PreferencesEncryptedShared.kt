@@ -6,8 +6,9 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 object PreferencesEncryptedShared {
     const val commonStudentName = "commonStudentName"
+    const val commonemail = "commonemail"
 
-    private var securePrefs: EncryptedSharedPreferences? = null
+    var securePrefs: EncryptedSharedPreferences? = null
 
     fun init(context: Context) {
         try {
@@ -23,8 +24,7 @@ object PreferencesEncryptedShared {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             ) as EncryptedSharedPreferences?
         }catch (e: Exception) {
-            Log.e("SECURE_PREF", "Encryption failed, fallback to normal prefs")
-
+            Log.e("SECURE_PREF", "$e : Encryption failed, fallback to normal prefs")
             securePrefs = null
         }
     }

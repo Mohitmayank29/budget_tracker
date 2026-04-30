@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jetpack1.Constants.SnackbarManager
@@ -45,6 +46,7 @@ import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.data.ApiResult
+import com.example.jetpack1.datastore.PreferencesEncryptedShared
 import com.example.jetpack1.navigation.navroute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,6 +85,7 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
             is ApiResult.Success -> {
                 Log.d("SignupScreen", "✅ Success state detected! Email: $email")
                 Toast.makeText(context, "Account created successfully!", Toast.LENGTH_LONG).show()
+                viewModel.setPreferenceEncryptedShared(PreferencesEncryptedShared.commonemail,email)
 
                 SnackbarManager.showMessage("Account created successfully! Please login.")
                 delay(1500)
@@ -94,6 +97,8 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
                 val errorMsg = (state as ApiResult.Error).message
                 Log.e("SignupScreen", "❌ Error state detected: $errorMsg")
                 SnackbarManager.showMessage(errorMsg)
+//                constants.CustomToast(errorMsg,1)
+                Toast.makeText(context,errorMsg,Toast.LENGTH_SHORT).show()
             }
             else -> {
                 Log.d("SignupScreen", "State is null or unknown")

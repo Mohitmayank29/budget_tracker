@@ -16,13 +16,14 @@ import com.example.jetpack1.screens.Dashboard.ProfileScreen
 import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignUpScreen
 import com.example.jetpack1.screens.Login.login.LoginScreen
 import com.example.jetpack1.screens.Login.signup.RegisterScreen
+import com.example.jetpack1.screens.PieChatScreen
 import com.example.jetpack1.screens.splashScreen.SplashScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationScreen(modifier: Modifier) {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = navroute.Splash.route)  {
+    NavHost(navController, startDestination = navroute.pie.route)  {
         composable(navroute.Splash.route) {
             SplashScreen(navController)
         }
@@ -54,6 +55,9 @@ fun NavigationScreen(modifier: Modifier) {
         }
         composable(navroute.language.route) {
             LanguageScreen(navController)
+        }
+        composable(navroute.pie.route) {
+            PieChatScreen(navController)
         }
 
     }

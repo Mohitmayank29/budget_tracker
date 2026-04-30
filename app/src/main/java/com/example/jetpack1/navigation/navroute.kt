@@ -14,6 +14,7 @@ sealed class navroute(val route : String) {
        object Feedback : navroute("feedback")
        object notification : navroute("notification")
        object language : navroute("laguageScreen")
+       object pie : navroute("pie")
 
 
 }

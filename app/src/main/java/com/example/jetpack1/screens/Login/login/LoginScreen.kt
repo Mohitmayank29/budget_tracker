@@ -44,6 +44,7 @@ import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesDataStore
+import com.example.jetpack1.datastore.PreferencesEncryptedShared
 import com.example.jetpack1.navigation.navroute
 import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
 
@@ -58,10 +59,9 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     val state = viewmodel.state.collectAsState()
     val result = state.value
-//    LaunchedEffect(Unit) {
-//         viewmodel.getPreferencesData(PreferencesDataStore.signupemail).let {email = it}
-//
-//    }
+    LaunchedEffect(Unit) {
+          viewmodel.getPreferenceEncryptedShared(PreferencesEncryptedShared.commonemail).let { email = it.toString() }
+    }
     LaunchedEffect(result) {
     when(result) {
         is ApiResult.Loading -> {
@@ -110,7 +110,6 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Top
         ) {
 
-            // 🔥 LOGO
             Image(
                 painter = painterResource(R.drawable.logo1),
                 contentDescription = null,
@@ -119,7 +118,6 @@ fun LoginScreen(
                     .padding(bottom = 20.dp)
             )
 
-            // 🔥 CARD
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),

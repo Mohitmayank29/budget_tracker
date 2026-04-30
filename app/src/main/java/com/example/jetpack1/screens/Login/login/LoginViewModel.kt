@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesDataStore
+import com.example.jetpack1.datastore.PreferencesEncryptedShared
+import com.example.jetpack1.datastore.PreferencesEncryptedShared.securePrefs
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,14 +19,16 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val auth : FirebaseAuth,
-    private val preferencesDataStore: PreferencesDataStore
+    private val preferencesDataStore: PreferencesDataStore,
 ) : ViewModel(){
-
     private val _state = MutableStateFlow<ApiResult<AuthResult>?>(null)
     val  state : StateFlow<ApiResult<AuthResult>?> = _state
     @SuppressLint("SuspiciousIndentation")
     suspend fun getPreferencesData(key: String): String {
         return preferencesDataStore.getPreferenceDataStore(key).first()
+    }
+    fun getPreferenceEncryptedShared(key: String): String? {
+        return securePrefs?.getString(key, null)
     }
     fun getlogin(email:String, password:String){
         viewModelScope.launch {
@@ -39,5 +43,4 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
 }

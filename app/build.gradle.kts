@@ -104,5 +104,9 @@
         //material 3
         implementation("androidx.compose.material3:material3:1.2.1")
         coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+        implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+        implementation("app.futured.donut:donut-compose:2.2.4")
+
+//        implementation()
 
     }

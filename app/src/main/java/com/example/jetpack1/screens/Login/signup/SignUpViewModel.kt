@@ -1,26 +1,20 @@
 package com.example.jetpack1.screens.Login.signup
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesDataStore
-import com.google.android.gms.common.api.Api
+import com.example.jetpack1.datastore.PreferencesEncryptedShared.securePrefs
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.printStackTrace
 
 @SuppressLint("ContextCastToActivity")
 @HiltViewModel
@@ -31,24 +25,22 @@ class SignUpViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<ApiResult<AuthResult>?>(null)
     val state: StateFlow<ApiResult<AuthResult>?> = _state
-    fun validpassword(password: String) {
-        try {
-            viewModelScope.launch {
-
-//                       auth.validatePassword(password)
-                if (password.length < 6) {
-
-                }
-            }
-
-        }catch (ex: Exception){
-            ex.printStackTrace()
-        }
-
-
+    fun setPreferenceEncryptedShared(key: String,value: String) {
+        securePrefs?.edit()?.putString(key, value)?.apply()
     }
-
+    fun validatePassword(password: String): String {
+        return when {
+            password.length < 6 -> "Password must be at least 6 digits"
+            !password.all { it.isDigit() } -> "Password must contain only numbers"
+            else -> "Valid"
+        }
+    }
     fun getsignup( email: String, password: String) {
+        val error = validatePassword(password)
+        if (error != null) {
+            _state.value = ApiResult.Error(error)
+            return
+        }
         viewModelScope.launch {
             try{
                 _state.value = ApiResult.Loading()
@@ -56,10 +48,7 @@ class SignUpViewModel @Inject constructor(
                              // Sign in success, update UI with the signed-in user's information
                              Log.d("TAG", "createUserWithEmail:success")
                              val user = auth.currentUser
-
-//                    updateUI(user)
                 _state.value = ApiResult.Success(result)
-                viewModelScope.launch {
                     preferencesDataStore.setPreferenceDataStore(
                         PreferencesDataStore.signupemail,
                         email.toString()
@@ -68,7 +57,11 @@ class SignUpViewModel @Inject constructor(
                         PreferencesDataStore.signuppassword,
                         password
                     )
-                }
+//                    preferencesEncryptedSharedPreferences.setPreferenceEncryptedShared(
+//                        PreferencesEncryptedShared.commonemail,
+//                        email
+//                    )
+
             } catch (ex: Exception){
                 ex.printStackTrace()
                 val errorMessage = when {

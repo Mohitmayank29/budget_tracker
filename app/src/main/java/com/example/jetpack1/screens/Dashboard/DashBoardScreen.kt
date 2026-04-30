@@ -75,6 +75,7 @@ import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpack1.Constants.SnackbarManager
 import com.example.jetpack1.Database.BudgetDatabase
 import com.example.jetpack1.Database.Table.TransactionTable
@@ -366,6 +367,7 @@ fun HistoryScreen(modifier: Modifier = Modifier) {
 fun SearchScreen(modifier: Modifier = Modifier) {
 
 }
+@Preview
 @Composable
 fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
     Box(
