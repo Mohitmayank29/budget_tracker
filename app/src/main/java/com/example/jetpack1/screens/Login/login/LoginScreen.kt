@@ -37,11 +37,12 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.jetpack1.Constants.SnackbarManager
 import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
+import com.example.jetpack1.common.SnackbarController
+import com.example.jetpack1.common.SnackbarDuration
 import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesDataStore
 import com.example.jetpack1.datastore.PreferencesEncryptedShared
@@ -68,19 +69,23 @@ fun LoginScreen(
         }
 
         is ApiResult.Success -> {
-            SnackbarManager.showMessage("Login successfully! ")
             navController.navigate(navroute.Dashboard.route) {
                 popUpTo(navroute.Login.route) { inclusive = true }
             }
+            SnackbarController.manager.showSnackbar(
+                "Login Successfully !!",
+                duration = SnackbarDuration.Long)
+
         }
 
         is ApiResult.Error -> {
             val message = result.message
-            SnackbarManager.showMessage(message)
+            SnackbarController.manager.error(message)
+
         }
 
         else -> {
-            SnackbarManager.showMessage(constants.SomethingWentWrong)
+            SnackbarController.manager.error(constants.SomethingWentWrong)
         }
     }
     }

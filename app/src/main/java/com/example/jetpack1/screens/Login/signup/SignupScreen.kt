@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.jetpack1.Constants.SnackbarManager
 import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
+import com.example.jetpack1.common.SnackbarController
 import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesEncryptedShared
 import com.example.jetpack1.navigation.navroute
@@ -60,22 +60,6 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
 
-//    val result = state.value
-    var toastMessage by remember { mutableStateOf<String?>(null) }
-    var isError by remember { mutableStateOf(false) }
-//    LaunchedEffect(toastMessage) {
-//        toastMessage?.let {
-//            constants.CustomToast(it, if (isError) 1 else 0)
-//            toastMessage = null
-//        }
-//    }
-    val snackbarHostState = remember { SnackbarHostState() }
-
-//    LaunchedEffect(Unit) {
-//        SnackbarManager.snacshkbarFlow.collect {
-//            snackbarHostState.showSnackbar(it)
-//        }
-//    }
     LaunchedEffect(state) {
         Log.d("SignupScreen", "State changed to: $state")
         when (state) {
@@ -84,10 +68,8 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
             }
             is ApiResult.Success -> {
                 Log.d("SignupScreen", "✅ Success state detected! Email: $email")
-                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_LONG).show()
                 viewModel.setPreferenceEncryptedShared(PreferencesEncryptedShared.commonemail,email)
-
-                SnackbarManager.showMessage("Account created successfully! Please login.")
+                SnackbarController.manager.success("Account created successfully! Please login.")
                 delay(1500)
                 navController.navigate("${navroute.Login.route}?email=$email") {
                     popUpTo(navroute.signup.route) { inclusive = true }
@@ -96,25 +78,13 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
             is ApiResult.Error -> {
                 val errorMsg = (state as ApiResult.Error).message
                 Log.e("SignupScreen", "❌ Error state detected: $errorMsg")
-                SnackbarManager.showMessage(errorMsg)
-//                constants.CustomToast(errorMsg,1)
-                Toast.makeText(context,errorMsg,Toast.LENGTH_SHORT).show()
+                SnackbarController.manager.error(errorMsg)
             }
             else -> {
                 Log.d("SignupScreen", "State is null or unknown")
             }
         }
     }
-//    // Collect Snackbar messages
-//    LaunchedEffect(Unit) {
-//        // Collect Snackbar messages - FIXED spelling
-//            Log.d("SignupScreen", "Starting SnackbarManager collection")
-//            SnackbarManager.snackbarFlow.collect { message ->  // Fixed: snackbarFlow (not snacshkbarFlow)
-//                Log.d("SignupScreen", "📢 Showing snackbar message: $message")
-//                snackbarHostState.showSnackbar(message)
-//            }
-//
-//    }
     if (state is ApiResult.Loading) {
         Log.d("SignupScreen", "Showing loading indicator")
 
@@ -216,26 +186,15 @@ fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hil
                             when {
                                 email.isBlank() -> {
                                     Log.w("SignupScreen", "Validation failed: Email is blank")
-                                    Toast.makeText(context, "Please enter email!", Toast.LENGTH_LONG).show()
-                                 scope.launch {
-                                     SnackbarManager.showMessage("Please enter email")
-                                 }
+                                     SnackbarController.manager.error("Please enter email")
                                 }
 
                                 password.length < 6 -> {
                                     Log.w("SignupScreen", "Validation failed: Password too short")
-
-                                    Toast.makeText(context, "Password must be at least 6 characters!", Toast.LENGTH_LONG).show()
-                                  scope.launch {
-                                      SnackbarManager.showMessage("Password must be at least 6 characters")
-                                  }
+                                      SnackbarController.manager.error("Password must be at least 6 characters")
                                 }
-
                                 else -> {
-                                    Log.d(
-                                        "SignupScreen",
-                                        "✅ Validation passed, calling viewModel.getsignup"
-                                    )
+                                    Log.d("SignupScreen", "✅ Validation passed, calling viewModel.getsignup")
                                     viewModel.getsignup(email, password)
                                 }
                             }

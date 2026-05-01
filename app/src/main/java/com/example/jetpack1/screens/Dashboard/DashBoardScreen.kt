@@ -76,9 +76,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.jetpack1.Constants.SnackbarManager
 import com.example.jetpack1.Database.BudgetDatabase
 import com.example.jetpack1.Database.Table.TransactionTable
+import com.example.jetpack1.common.AppSnackbarHost
 import com.example.jetpack1.common.BottomNavigationBar
 import java.time.LocalDate
 
@@ -109,17 +109,7 @@ fun DashboardScreen(navController: NavController)  {
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
             rememberTopAppBarState()
         )
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(Unit) {
-        SnackbarManager.messages.collect { message ->
-            snackbarHostState.showSnackbar(message)
-        }
-    }
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             DashboardTopBar(
@@ -367,7 +357,6 @@ fun HistoryScreen(modifier: Modifier = Modifier) {
 fun SearchScreen(modifier: Modifier = Modifier) {
 
 }
-@Preview
 @Composable
 fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
     Box(

@@ -35,12 +35,9 @@ class SignUpViewModel @Inject constructor(
             else -> "Valid"
         }
     }
-    fun getsignup( email: String, password: String) {
+    fun getsignup(email: String, password: String) {
+        Log.d("password","$email, $password")
         val error = validatePassword(password)
-        if (error != null) {
-            _state.value = ApiResult.Error(error)
-            return
-        }
         viewModelScope.launch {
             try{
                 _state.value = ApiResult.Loading()
