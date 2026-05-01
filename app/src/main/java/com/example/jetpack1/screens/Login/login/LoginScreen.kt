@@ -56,7 +56,7 @@ fun LoginScreen(
     emailarg: String,
     viewmodel: LoginViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf(emailarg) }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val state = viewmodel.state.collectAsState()
     val result = state.value

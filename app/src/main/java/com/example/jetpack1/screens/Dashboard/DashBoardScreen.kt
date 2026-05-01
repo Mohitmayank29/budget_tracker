@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -78,7 +80,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpack1.Database.BudgetDatabase
 import com.example.jetpack1.Database.Table.TransactionTable
-import com.example.jetpack1.common.AppSnackbarHost
 import com.example.jetpack1.common.BottomNavigationBar
 import java.time.LocalDate
 
@@ -120,6 +121,7 @@ fun DashboardScreen(navController: NavController)  {
                 onNotificationClick = { navController.navigate(navroute.language.route) },
             )
         },
+        contentWindowInsets = WindowInsets(0),
         bottomBar = {
             BottomNavigationBar()
         }
@@ -140,7 +142,7 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
             .navigationBarsPadding(),
         contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
     ) {
@@ -244,119 +246,9 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
 }
 
 @Composable
-fun ProfileScreen(navController: NavController) {
-
-}
-
+fun ProfileScreen(navController: NavController) {}
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun HelpScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun AboutScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun ContactScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun FeedbackScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun PrivacyPolicyScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun TermsAndConditionsScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun NotificationsScreen(navController: NavController) {
-
-}
-
-@Composable
-fun SupportScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun FAQScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun PricingScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun BlogScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun GalleryScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun EventsScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun VideosScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun AudioScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun PodcastScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun LibraryScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun DownloadsScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun BookmarksScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun HistoryScreen(modifier: Modifier = Modifier) {
-
-}
-
-@Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
-
-}
+fun NotificationsScreen(navController: NavController) {}
 @Composable
 fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
     Box(
