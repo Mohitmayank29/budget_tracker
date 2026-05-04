@@ -1,7 +1,7 @@
 package com.example.jetpack1.Database
 import androidx.room.TypeConverter
-import com.budget.tracker.data.Category
-import com.budget.tracker.data.TransactionType
+import com.example.jetpack1.enumclasses.Category
+import com.example.jetpack1.enumclasses.TransactionType
 import java.time.LocalDate
 
 // --- Type Converters ---

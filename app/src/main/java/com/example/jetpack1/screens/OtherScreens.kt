@@ -24,10 +24,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.budget.tracker.data.Category
-import com.budget.tracker.viewmodel.UiState
+import androidx.navigation.NavController
+import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.screens.Dashboard.TransactionRow
+import com.example.jetpack1.screens.Dashboard.UiState
 import com.example.jetpack1.screens.Dashboard.formatCurrency
+import com.example.jetpack1.screens.addtranscation.outlinedTextFieldColors
 import com.example.jetpack1.ui.theme.Accent
 import com.example.jetpack1.ui.theme.Background
 import com.example.jetpack1.ui.theme.NegativeRed
@@ -38,33 +40,38 @@ import java.time.format.DateTimeFormatter
 
 // --- History Screen ---
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HistoryScreen(
+    innerNavController: NavController,
     state: UiState,
-    onBack: () -> Unit,
     onDeleteTransaction: (Int) -> Unit
 ) {
     val monthLabel = state.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 56.dp, start = 16.dp, end = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
-            }
-            Column(modifier = Modifier.padding(start = 8.dp)) {
-                Text("History", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
-                Text("$monthLabel · ${state.transactions.size} transactions", color = TextMuted, fontSize = 13.sp)
-            }
-        }
+
+
+//    Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 56.dp, start = 16.dp, end = 24.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            IconButton(onClick = onBack) {
+//                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextPrimary)
+//            }
+//            Column(modifier = Modifier.padding(start = 8.dp)) {
+//                Text("History", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+//                Text("$monthLabel · ${state.transactions.size} transactions", color = TextMuted, fontSize = 13.sp)
+//            }
+//        }
 
         Spacer(Modifier.height(16.dp))
 

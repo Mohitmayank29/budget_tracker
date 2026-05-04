@@ -2,7 +2,7 @@ package com.example.jetpack1.Database.Table
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.budget.tracker.data.Category
+import com.example.jetpack1.enumclasses.Category
 
 @Entity(tableName = "budget_table",primaryKeys = ["year", "month", "category"])
 data class BudgetTable(

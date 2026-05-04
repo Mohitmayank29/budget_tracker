@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 @Entity(tableName = "transactions_table")
 
-class TransactionTable (
+data class TransactionTable (
         @PrimaryKey(autoGenerate = true) val id: Int = 0,
         @ColumnInfo (name = "amount") val amount: Double,
         @ColumnInfo (name = "label") val label: String,

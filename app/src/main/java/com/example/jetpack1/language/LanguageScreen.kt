@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,7 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
-import com.example.jetpack1.common.CommonTopbar
+import com.example.jetpack1.common.DashboardTopBar
 import com.example.jetpack1.localmanager.LanguagePreference
 import com.example.jetpack1.localmanager.LocaleManager
 import kotlinx.coroutines.delay
@@ -69,14 +70,16 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
     }
     val context = LocalContext.current
     val activity = (context as? Activity)
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .navigationBarsPadding()
     ) {
-        CommonTopbar(
+        DashboardTopBar(
             title = "Change Language",
+            scrollBehavior = scrollBehavior,
             onbackclick = { navController.popBackStack() },
         )
         Column(

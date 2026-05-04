@@ -51,6 +51,7 @@ class SnackbarManager {
         duration: SnackbarDuration = SnackbarDuration.Short
     ) {
         scope.launch {
+            println("🔵 EMITTING SNACKBAR: $message") // Add log
             _events.emit(
                 SnackbarEvent(
                     message, type, actionLabel, onAction, duration
@@ -77,6 +78,7 @@ fun AppSnackbarHost(
 
     LaunchedEffect(Unit) {
         snackbarManager.events.collect { event ->
+            println("🟢 COLLECTING SNACKBAR EVENT: ${event.message}") // Add log
 
             currentEvent = event
 

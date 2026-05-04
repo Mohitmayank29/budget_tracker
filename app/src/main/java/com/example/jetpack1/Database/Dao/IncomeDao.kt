@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.budget.tracker.data.MonthlyIncome
 import com.example.jetpack1.Database.Table.MonthlyIncomeTable
 import kotlinx.coroutines.flow.Flow
 

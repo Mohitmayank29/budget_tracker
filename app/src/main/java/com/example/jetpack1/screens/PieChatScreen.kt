@@ -22,28 +22,7 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-@Composable
-fun PieChatScreen(navController: NavController) {
-    Column(Modifier.fillMaxSize()) {
-        LazyColumn() {
-            item {
-//                attendance.data != null -> {
-                val totalClasses = 100
-                //                attendance.data?.firstOrNull()?.overallClassHeld ?: 0
-                val attendedClasses = 30
-//                    attendance.data?.firstOrNull()?.overallClassAttended ?: 0
-                val absentClasses = totalClasses - attendedClasses
 
-                MyPieChartScreen(
-                    totalClasses = totalClasses,
-                    attendedClasses = attendedClasses,
-                    absentClasses = absentClasses
-                )
-//            }
-            }
-        }
-    }
-}
 
 @Composable
 fun PieChartView(

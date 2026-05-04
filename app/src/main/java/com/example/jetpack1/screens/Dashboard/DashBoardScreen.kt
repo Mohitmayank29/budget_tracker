@@ -1,6 +1,7 @@
 package com.example.jetpack1.screens.Dashboard
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.lazy.items
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -28,14 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,111 +46,134 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.jetpack1.data.BudgetRepository
-import com.budget.tracker.data.Category
-import com.budget.tracker.data.TransactionType
-import com.budget.tracker.viewmodel.BudgetViewModel
-import com.budget.tracker.viewmodel.BudgetViewModelFactory
-import com.budget.tracker.viewmodel.UiState
 import com.example.jetpack1.R
 import com.example.jetpack1.common.DashboardTopBar
 import com.example.jetpack1.navigation.navroute
 import com.example.jetpack1.ui.theme.Accent
-import com.example.jetpack1.ui.theme.Background
 import com.example.jetpack1.ui.theme.CardBackground
 import com.example.jetpack1.ui.theme.NegativeRed
 import com.example.jetpack1.ui.theme.PositiveGreen
-import com.example.jetpack1.ui.theme.Surface1
 import com.example.jetpack1.ui.theme.TextMuted
 import com.example.jetpack1.ui.theme.TextPrimary
 import com.example.jetpack1.ui.theme.TextSecondary
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.jetpack1.Database.BudgetDatabase
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.jetpack1.Database.Table.TransactionTable
 import com.example.jetpack1.common.BottomNavigationBar
+import com.example.jetpack1.enumclasses.Category
+import com.example.jetpack1.enumclasses.TopBarType
+import com.example.jetpack1.enumclasses.TransactionType
+import com.example.jetpack1.screens.addtranscation.AddTransactionScreen
+import com.example.jetpack1.screens.HistoryScreen
+import com.example.jetpack1.screens.MyPieChartScreen
 import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController)  {
-    val configuration = LocalConfiguration.current
-    val context = LocalContext.current
-    val database = remember {
-        BudgetDatabase.getInstance(context)
-    }
-    val repository = remember {
-        BudgetRepository(
-            transactionDao = database.transactiobDao(),
-            budgetDao = database.budgetDao(),
-            incomeDao = database.incomeDao()
-        )
-    }
-
-    val factory = remember {
-        BudgetViewModelFactory(repository)
-    }
-
-    val viewModel: BudgetViewModel = viewModel(factory = factory)
+fun DashboardScreen(navController: NavController,viewModel: DashBoardViewModel = hiltViewModel())  {
+    val innerNavController = rememberNavController()
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
             rememberTopAppBarState()
         )
+    val state by viewModel.uiState.collectAsState()
+    val currentRoute = innerNavController
+        .currentBackStackEntryAsState()
+        .value?.destination?.route
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            DashboardTopBar(
-                title = stringResource(R.string.Budget),
-                scrollBehavior = scrollBehavior,
-                userName = "Mohit Kumar",
-                onMenuClick = { navController.navigate(navroute.Profile.route) },
-                onNotificationClick = { navController.navigate(navroute.language.route) },
-            )
-        },
+            AnimatedContent(targetState = currentRoute, label = "") { route ->
+
+                DashboardTopBar(
+                    title = route ?: "",
+                    scrollBehavior = scrollBehavior,
+                    type = if (route == navroute.home.route) {
+                        TopBarType.LARGE
+                    } else {
+                        TopBarType.BACK_ONLY
+                    },
+                    onAccountClick = {navController.navigate(navroute.Profile.route)},
+                    onNotificationClick = {navController.navigate(navroute.language.route)},
+                    onbackclick = { innerNavController.popBackStack() }
+                )
+            }
+                 },
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
-            BottomNavigationBar()
+            BottomNavigationBar(innerNavController)
         }
-    ){
-        innerPadding ->
-        HomeScreen(
-            paddingValues = innerPadding,
-            navController = navController,
-            viewModel = viewModel
-        )
+    ){innerPadding ->
+      NavHost(
+          navController = innerNavController,
+          startDestination = navroute.home.route,
+          modifier = Modifier
+      ){
+         composable(navroute.home.route) {
+             HomeScreen(navController,
+                 innerPadding,viewModel)
+         }
+          composable(navroute.history.route){
+              HistoryScreen(
+                  innerNavController = innerNavController,
+                  state = state,
+                  onDeleteTransaction = { id ->
+                      viewModel.deleteTransaction(id)
+                  })
+          }
+          composable(navroute.AddTranscation.route){
+              AddTransactionScreen(navController = navController,innerPadding)
+          }
+      }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewModel: BudgetViewModel) {
+fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,viewModel: DashBoardViewModel) {
     val state by viewModel.uiState.collectAsState()
+    val sampleExpensesByCategory = mapOf(
+        Category.FOOD to 2500.0,
+        Category.TRANSPORT to 1200.0,
+        Category.SHOPPING to 3200.0,
+        Category.HEALTH to 800.0,
+        Category.ENTERTAINMENT to 1500.0,
+        Category.UTILITIES to 2000.0,
+        Category.OTHER to 600.0
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .padding(10.dp)
             .navigationBarsPadding(),
-        contentPadding = PaddingValues(top = paddingValues.calculateTopPadding())
+        contentPadding = PaddingValues(
+            top = contentpadding.calculateTopPadding(),
+            bottom = contentpadding.calculateBottomPadding()
+        )
     ) {
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        Brush.verticalGradient(listOf(Surface1, Background))
+                        MaterialTheme.colorScheme.background
+//                        Brush.verticalGradient(listOf(MaterialTheme.colorScheme.background, Surface1))
                     )
             ) {
                 // Month switcher
@@ -163,17 +185,17 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
                     IconButton(onClick = {
 //                        navController.navigate()
                     }) {
-                        Text("‹", color = TextSecondary, fontSize = 24.sp, fontWeight = FontWeight.Light)
+                        Text("‹", color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp, fontWeight = FontWeight.Light)
                     }
                     Text(
                         state.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     IconButton(onClick = { }) {
-                        Text("›", color = TextSecondary, fontSize = 24.sp, fontWeight = FontWeight.Light)
+                        Text("›", color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp, fontWeight = FontWeight.Light)
                     }
                 }
             }
@@ -182,8 +204,9 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
         item {
             BalanceCard(state = state, onSetIncomeClick = { })
         }
+        val categoryData = state.expensesByCategory.ifEmpty { sampleExpensesByCategory }
         // Category breakdown
-        if (state.expensesByCategory.isNotEmpty()) {
+        if (categoryData.isNotEmpty()) {
             item {
                 SectionTitle("By Category", modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp))
             }
@@ -197,10 +220,25 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
                     category = category,
                     amount = amount,
                     budget = budget,
-                    totalExpenses = state.expenses
+                    totalExpenses = categoryData.values.sum()
                 )
             }
             item { Spacer(Modifier.height(8.dp)) }
+        }
+        item {
+//                attendance.data != null -> {
+            val totalClasses = 100
+            //                attendance.data?.firstOrNull()?.overallClassHeld ?: 0
+            val attendedClasses = 30
+//                    attendance.data?.firstOrNull()?.overallClassAttended ?: 0
+            val absentClasses = totalClasses - attendedClasses
+
+            MyPieChartScreen(
+                totalClasses = totalClasses,
+                attendedClasses = attendedClasses,
+                absentClasses = absentClasses
+            )
+//            }
         }
         // Recent transactions
         item {
@@ -246,7 +284,13 @@ fun HomeScreen(paddingValues: PaddingValues,navController: NavController,viewMod
 }
 
 @Composable
-fun ProfileScreen(navController: NavController) {}
+fun ProfileScreen(navController: NavController) {
+    Column(Modifier.fillMaxSize()
+    , verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("NO Data ")
+    }
+}
 @Composable
 fun NotificationsScreen(navController: NavController) {}
 @Composable
@@ -384,6 +428,17 @@ fun CategoryRow(
     }
 }
 
+@Preview
+@Composable
+private fun PreviewCatergoryRow() {
+    CategoryRow(
+        category = Category.FOOD,
+        amount = 2500.0,
+        budget = 3000.0,
+        totalExpenses = 10000.0
+    )
+
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionRow(transaction: TransactionTable, onDelete: () -> Unit) {

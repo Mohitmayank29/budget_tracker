@@ -6,6 +6,8 @@ sealed class navroute(val route : String) {
        object signup : navroute("register")
        object loginsignup : navroute("loginsignup")
        object Dashboard : navroute("dashboard")
+       object main : navroute("main")
+       object home : navroute("DashBoard")
        object Profile : navroute("profile")
        object Settings : navroute("settings")
        object Help : navroute("help")
@@ -15,6 +17,8 @@ sealed class navroute(val route : String) {
        object notification : navroute("notification")
        object language : navroute("laguageScreen")
        object pie : navroute("pie")
+       object history : navroute("history")
+       object AddTranscation : navroute("AddTranscation")
 
 
 }

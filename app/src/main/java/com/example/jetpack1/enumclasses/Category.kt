@@ -1,9 +1,4 @@
-package com.budget.tracker.data
-
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import java.time.LocalDate
+package com.example.jetpack1.enumclasses
 
 enum class TransactionType { EXPENSE, INCOME }
 
@@ -20,8 +15,6 @@ enum class Category(
     UTILITIES("Utilities", "💡", 0xFFF8A978),
     OTHER("Other", "📦", 0xFF98C1D9)
 }
-
-
 data class MonthlyIncome(
     val year: Int,
     val month: Int,

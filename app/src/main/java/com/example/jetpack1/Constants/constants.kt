@@ -1,5 +1,6 @@
 package com.example.jetpack1.Constants
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -49,5 +50,12 @@ object constants {
                 fontSize = 14.sp
             )
         }
+    }
+    fun getAppVersion(context: Context): Pair<String, Long> {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val versionName = packageInfo.versionName ?: "N/A"
+        val versionCode =
+            packageInfo.longVersionCode
+        return versionName to versionCode
     }
 }

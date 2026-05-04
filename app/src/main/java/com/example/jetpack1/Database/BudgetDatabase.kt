@@ -20,24 +20,4 @@ public  abstract class BudgetDatabase: RoomDatabase() {
     abstract fun transactiobDao() : TranscationDao
     abstract fun budgetDao(): BudgetDao
     abstract fun incomeDao(): IncomeDao
-    companion object {
-
-        @Volatile
-        private var INSTANCE: BudgetDatabase? = null
-
-        fun getInstance(context: Context): BudgetDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    BudgetDatabase::class.java,
-                    "budget_database"
-                )
-                    .fallbackToDestructiveMigration().build()
-
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
-
 }

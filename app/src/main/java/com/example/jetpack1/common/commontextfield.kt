@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +39,9 @@ fun CommonOutlinedTextField(
     singleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     leadingIcon: ImageVector? = null,
-    isPassword: Boolean = false
+    onCalenderclick : () -> Unit  = {},
+    isPassword: Boolean = false,
+    isCalender: Boolean = false
 ) {
 
     var passwordVisible by remember { mutableStateOf(false) }
@@ -66,6 +69,14 @@ fun CommonOutlinedTextField(
                         passwordVisible = !passwordVisible
                     }) {
                         Icon(icon, contentDescription = null)
+                    }
+                }
+                if(isCalender) {
+                    IconButton(onClick = {
+                        onCalenderclick()
+                    }) {
+                        Icon(Icons.Default.DateRange, contentDescription = null)
+
                     }
                 }
             },
