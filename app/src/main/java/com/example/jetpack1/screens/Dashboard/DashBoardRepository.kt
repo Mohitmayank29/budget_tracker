@@ -24,7 +24,7 @@ class DashBoardRepository @Inject constructor(
     fun getIncome(year: Int, month: Int): Flow<MonthlyIncomeTable?> =
         incomeDao.getIncome(year, month)
 
-    suspend fun addTransaction(transaction: TransactionTable) =
+    suspend fun insertTransaction(transaction: TransactionTable) =
         transactionDao.insert(transaction)
 
     suspend fun deleteTransaction(id: Int) =

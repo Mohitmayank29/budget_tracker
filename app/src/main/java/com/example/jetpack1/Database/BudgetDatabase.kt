@@ -14,7 +14,7 @@ import com.example.jetpack1.Database.Table.MonthlyIncomeTable
 import com.example.jetpack1.Database.Table.TransactionTable
 
 @TypeConverters(Converters::class)
-@Database(entities = [TransactionTable::class, BudgetTable::class, MonthlyIncomeTable::class], version = 2, exportSchema = false)
+@Database(entities = [TransactionTable::class, BudgetTable::class, MonthlyIncomeTable::class], version = 5, exportSchema = false)
 public  abstract class BudgetDatabase: RoomDatabase() {
 
     abstract fun transactiobDao() : TranscationDao

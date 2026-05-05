@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.example.jetpack1.screens.Dashboard.UiState
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
@@ -37,13 +38,13 @@ fun PieChartView(
             .fillMaxWidth()
             .height(250.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.Gray),
+            .background(Color.LightGray.copy(alpha = 0.1f)),
         update = { chart ->
             chart.apply {
-                holeRadius = 70f
-                transparentCircleRadius = 70f
+                holeRadius = 50f
+                transparentCircleRadius = 50f
                 isRotationEnabled = true
-                isHighlightPerTapEnabled = false
+                isHighlightPerTapEnabled = true
                 dragDecelerationFrictionCoef = 0.95f
                 setUsePercentValues(false)
                 setDrawEntryLabels(false)
@@ -52,8 +53,8 @@ fun PieChartView(
                 legend.isEnabled = true
                 setCenterText(centerText)
                 setCenterTextSize(12f)
-                setCenterTextColor(android.graphics.Color.BLACK)
-                setHoleColor(Color.Gray.toArgb())
+                setCenterTextColor(android.graphics.Color.WHITE)
+                setHoleColor(Color.Gray.copy(alpha = 0.1f).toArgb())
                 legend.form = Legend.LegendForm.CIRCLE
                 animateXY(1000, 1000)
 
@@ -61,7 +62,14 @@ fun PieChartView(
                 dataSet.colors = colors
                 dataSet.sliceSpace = 1f
                 dataSet.valueTextColor = android.graphics.Color.WHITE
-                dataSet.valueTextSize = 7f
+                dataSet.valueTextSize = 11f
+
+                legend.apply {
+                    isEnabled = true
+                    textColor = android.graphics.Color.WHITE
+                    textSize = 12f
+                    formSize = 10f
+                }
 
                 val data = PieData(dataSet)
                 setData(data)
@@ -72,21 +80,21 @@ fun PieChartView(
 }
 
 @Composable
-fun MyPieChartScreen(totalClasses: Int, attendedClasses: Int, absentClasses: Int) {
+fun MyPieChartScreen(state: UiState) {
 
     val entries = listOf(
-        PieEntry(attendedClasses.toFloat(), "Present"),
-        PieEntry(absentClasses.toFloat(), "Absent")
+        PieEntry(state.income.toFloat(), "Income"),
+        PieEntry(state.expenses.toFloat(), "Expense")
     )
 
     val colors = listOf(
-        Color.Blue,
+        Color.Magenta,
         Color.Red
     ).map { it.toArgb() }
 
     PieChartView(
         dataEntries = entries,
         colors = colors,
-        centerText = " Total Attendance \n $totalClasses"
+        centerText = " Total Balance: \n ${state.balance}"
     )
 }

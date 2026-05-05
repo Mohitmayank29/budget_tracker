@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import java.time.YearMonth
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,8 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
+import com.example.jetpack1.common.SnackbarController
+import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TransactionType
 import com.example.jetpack1.ui.theme.Accent
@@ -31,7 +35,11 @@ import com.example.jetpack1.ui.theme.PositiveGreen
 import com.example.jetpack1.ui.theme.TextMuted
 import com.example.jetpack1.ui.theme.TextSecondary
 import java.time.LocalDate
-
+import android.app.DatePickerDialog
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
@@ -45,7 +53,51 @@ fun AddTransactionScreen(
     var label by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.FOOD) }
     var type by remember { mutableStateOf(TransactionType.EXPENSE) }
-    var dateText by remember { mutableStateOf(LocalDate.now().toString()) }
+    var dateText by remember { mutableStateOf("") }        // UI formatted
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) } // actual date
+    val state = viewModel.state.collectAsState()
+    val result = state.value
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+
+            val selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+            dateText = selectedDate.format(formatter)
+
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+    LaunchedEffect(result) {
+        when (result) {
+
+            is ApiResult.Success<*> -> {
+                val data = result.data
+                SnackbarController.manager.success("Added in $type")
+                Log.d("transcation1",data.toString())
+
+                navController.popBackStack()
+
+            }
+
+            is ApiResult.Error<*> -> {
+                val message = result.message
+                SnackbarController.manager.error(message)
+
+
+            }
+
+            else -> {}
+        }
+    }
+    if(result is ApiResult.Loading){
+        CircularProgressIndicator()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -121,9 +173,8 @@ fun AddTransactionScreen(
                 placeholder = "Select From Calender",
                 isCalender = true,
                 onCalenderclick = {
-
+                    datePickerDialog.show()
                 }
-
             )
         }
         item {
@@ -174,12 +225,28 @@ fun AddTransactionScreen(
                     }
                 }
             }
+            else{
+                // mkae that ki if income was select to koi categeory nhi jygi and i ncomebhi income ma ho
+            }
         }
         item {
-            val parsedAmount = amount.toDoubleOrNull() ?: ""
-            val parsedDate = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
-//                    onAdd(parsedAmount, label, selectedCategory, type, parsedDate)
-             CommonButton(text = "Add Transaction", onClick = {})
+
+
+             CommonButton(text = "Add Transaction", onClick = {
+                 val parsedAmount = amount.toDoubleOrNull() ?: return@CommonButton
+                 val parsedDate = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
+                 val yearMonth = YearMonth.from(parsedDate) // ✅ FIX
+
+                 viewModel.submitaddeddata(
+                     amount = parsedAmount,
+                     description = label,
+                     date = parsedDate,
+                     type =type,
+                     category =selectedCategory,
+                     yearMonth =yearMonth
+                 )
+                 Log.d("data","$label ,$type $selectedCategory")
+             })
         }
     }
 }

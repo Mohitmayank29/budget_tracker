@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +47,7 @@ import java.time.format.DateTimeFormatter
 fun HistoryScreen(
     innerNavController: NavController,
     state: UiState,
+    contentpadding : PaddingValues,
     onDeleteTransaction: (Int) -> Unit
 ) {
     val monthLabel = state.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
@@ -55,6 +57,7 @@ fun HistoryScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .navigationBarsPadding()
+
     ) {
 
 
@@ -81,8 +84,12 @@ fun HistoryScreen(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(bottom = 40.dp),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+             Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(
+                    top = contentpadding.calculateTopPadding(),
+                    bottom = contentpadding.calculateBottomPadding()
+                )
             ) {
                 items(state.transactions) { tx ->
                     TransactionRow(transaction = tx, onDelete = { onDeleteTransaction(tx.id) })

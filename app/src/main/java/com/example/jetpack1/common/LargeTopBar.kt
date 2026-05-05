@@ -11,11 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +26,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -142,40 +140,49 @@ fun DashboardTopBar(
             }
         }
         TopBarType.SMALL -> {
-                TopAppBar(
-                    title = {
-                        Column(modifier = Modifier.padding(start = 8.dp)) {
-//                Text("History", color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
-//                Text("$monthLabel · ${state.transactions.size} transactions", color = TextMuted, fontSize = 13.sp)
-//
-                            Text(
-                                text = title,
-                                fontWeight = FontWeight.SemiBold,
-                                color = NegativeRed,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-//                            Text("$monthLabel · ${state.transactions.size} transactions", color = TextMuted, fontSize = 13.sp)
+            CenterAlignedTopAppBar(
 
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onbackclick) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = onNotificationClick) {
-                            Icon(
-                                painter = painterResource(R.drawable.notification),
-                                contentDescription = "notification",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = title,
+                            fontWeight = FontWeight.SemiBold,
+                            color = NegativeRed,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
-                )
-            }
+                },
+
+                navigationIcon = {
+                    IconButton(onClick = onMenuClick) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu"
+                        )
+                    }
+                },
+
+                actions = {
+                    IconButton(onClick = onNotificationClick) {
+                        Icon(
+                            painter = painterResource(R.drawable.notification),
+                            contentDescription = "notification",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                    IconButton(onClick = onAccountClick) {
+                        Icon(
+                            painter = painterResource(R.drawable.account),
+                            contentDescription = "Accounts",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                }
+            )
+        }
         TopBarType.BACK_ONLY -> {
             TopAppBar(
                 title = {

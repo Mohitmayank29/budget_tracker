@@ -56,6 +56,7 @@
         implementation(libs.androidx.compose.ui.graphics)
         implementation(libs.androidx.compose.ui.tooling.preview)
         implementation(libs.androidx.compose.material3)
+        implementation(libs.androidx.material3)
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)
         androidTestImplementation(libs.androidx.espresso.core)
@@ -104,9 +105,13 @@
         //material 3
         implementation("androidx.compose.material3:material3:1.2.1")
         coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+        // pie chart
         implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
         implementation("app.futured.donut:donut-compose:2.2.4")
 
+        // swip gesture
+        implementation("androidx.compose.foundation:foundation:1.6.0")
 //        implementation()
-
+        implementation("androidx.compose.material3:material3")
+        implementation("androidx.compose.material:material-icons-extended") // for icons
     }

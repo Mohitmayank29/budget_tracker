@@ -24,12 +24,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -66,6 +70,7 @@ import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -79,6 +84,7 @@ import com.example.jetpack1.enumclasses.TransactionType
 import com.example.jetpack1.screens.addtranscation.AddTransactionScreen
 import com.example.jetpack1.screens.HistoryScreen
 import com.example.jetpack1.screens.MyPieChartScreen
+import com.example.jetpack1.screens.addtranscation.outlinedTextFieldColors
 import java.time.LocalDate
 
 
@@ -125,19 +131,22 @@ fun DashboardScreen(navController: NavController,viewModel: DashBoardViewModel =
           modifier = Modifier
       ){
          composable(navroute.home.route) {
-             HomeScreen(navController,
-                 innerPadding,viewModel)
+             HomeScreen(
+                 navController = innerNavController,
+                 contentpadding = innerPadding,
+                 viewModel = viewModel)
          }
           composable(navroute.history.route){
               HistoryScreen(
                   innerNavController = innerNavController,
                   state = state,
+                  contentpadding = innerPadding,
                   onDeleteTransaction = { id ->
                       viewModel.deleteTransaction(id)
                   })
           }
           composable(navroute.AddTranscation.route){
-              AddTransactionScreen(navController = navController,innerPadding)
+              AddTransactionScreen(navController = innerNavController,innerPadding)
           }
       }
     }
@@ -145,8 +154,12 @@ fun DashboardScreen(navController: NavController,viewModel: DashBoardViewModel =
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,viewModel: DashBoardViewModel) {
+fun HomeScreen(navController: NavController,
+               contentpadding: PaddingValues ,
+               viewModel: DashBoardViewModel,
+) {
     val state by viewModel.uiState.collectAsState()
+    var showIncomeDialog by remember { mutableStateOf(false) }
     val sampleExpensesByCategory = mapOf(
         Category.FOOD to 2500.0,
         Category.TRANSPORT to 1200.0,
@@ -202,7 +215,21 @@ fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,view
         }
         // Balance card
         item {
-            BalanceCard(state = state, onSetIncomeClick = { })
+            BalanceCard(state = state,
+                onSetIncomeClick = { showIncomeDialog = true}
+            )
+            if (showIncomeDialog) {
+                IncomeDialog(
+                    currentIncome = state.income,
+                    onConfirm = { amount ->
+                        viewModel.setIncome(amount)
+                        showIncomeDialog = false
+                    },
+                    onDismiss = {
+                        showIncomeDialog = false
+                    }
+                )
+            }
         }
         val categoryData = state.expensesByCategory.ifEmpty { sampleExpensesByCategory }
         // Category breakdown
@@ -226,19 +253,9 @@ fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,view
             item { Spacer(Modifier.height(8.dp)) }
         }
         item {
-//                attendance.data != null -> {
-            val totalClasses = 100
-            //                attendance.data?.firstOrNull()?.overallClassHeld ?: 0
-            val attendedClasses = 30
-//                    attendance.data?.firstOrNull()?.overallClassAttended ?: 0
-            val absentClasses = totalClasses - attendedClasses
-
             MyPieChartScreen(
-                totalClasses = totalClasses,
-                attendedClasses = attendedClasses,
-                absentClasses = absentClasses
+                state = state
             )
-//            }
         }
         // Recent transactions
         item {
@@ -250,13 +267,13 @@ fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,view
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SectionTitle("Recent")
-                if (state.transactions.size > 5) {
+                if (state.transactions.size > 4) {
                     Text(
                         "See all",
                         color = Accent,
                         fontSize = 12.sp,
                         modifier = Modifier.clickable {
-//                            onSeeAllClick()
+                           navController.navigate(navroute.history.route)
                         }
                     )
                 }
@@ -276,7 +293,7 @@ fun HomeScreen(navController: NavController, contentpadding: PaddingValues ,view
         } else {
             items(state.transactions.take(6)) { tx ->
                 TransactionRow(transaction = tx, onDelete = {
-//                    onDeleteTransaction(tx.id)
+                    viewModel.deleteTransactionUndo(tx)
                 })
             }
         }
@@ -358,7 +375,10 @@ fun BalanceCard(state: UiState, onSetIncomeClick: () -> Unit) {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 4.dp)
                     )
-                    val count = state.transactions.count { TransactionType.valueOf(it.type) == TransactionType.EXPENSE }
+                    val count = state.transactions.count {
+                        runCatching { TransactionType.valueOf(it.type) }
+                            .getOrDefault(TransactionType.EXPENSE) == TransactionType.EXPENSE
+                    }
                     Text("$count transactions", color = TextMuted, fontSize = 11.sp, modifier = Modifier.padding(top = 4.dp))
                 }
             }
@@ -442,12 +462,15 @@ private fun PreviewCatergoryRow() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TransactionRow(transaction: TransactionTable, onDelete: () -> Unit) {
-    val categoryEnum = Category.valueOf(transaction.category)
+    val categoryEnum = runCatching {
+        Category.valueOf(transaction.category)
+    }.getOrDefault(Category.OTHER)
     val catColor = Color(categoryEnum.colorHex)
     var showDelete by remember { mutableStateOf(false) }
-    val date = LocalDate.ofEpochDay(transaction.date)
-    val typeEnum = TransactionType.valueOf(transaction.type)
-
+    val date = LocalDate.parse(transaction.date.toString())
+    val typeEnum = runCatching {
+        TransactionType.valueOf(transaction.type)
+    }.getOrDefault(TransactionType.EXPENSE)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -514,4 +537,60 @@ fun formatCurrency(amount: Double): String {
     val fmt = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
     fmt.maximumFractionDigits = 0
     return fmt.format(amount)
+}
+@Composable
+fun SmallBudgetButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White.copy(0.08f))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
+    ) {
+        Text("📊 Budgets", color = TextSecondary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+@Composable
+fun IncomeDialog(currentIncome: Double, onConfirm: (Double) -> Unit, onDismiss: () -> Unit) {
+    var input by remember { mutableStateOf(if (currentIncome > 0) currentIncome.toInt().toString() else "") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color(0xFF1A1A26))
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("💰 Set Income", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(4.dp))
+            Text("For this month", color = TextMuted, fontSize = 13.sp)
+            Spacer(Modifier.height(16.dp))
+            OutlinedTextField(
+                value = input,
+                onValueChange = { input = it },
+                placeholder = { Text("Amount (₹)", color = TextMuted) },
+                textStyle = LocalTextStyle.current.copy(color = TextPrimary, fontSize = 24.sp, fontWeight = FontWeight.Bold),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                singleLine = true,
+                colors = outlinedTextFieldColors(),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(20.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary)
+                ) { Text("Cancel") }
+                Button(
+                    onClick = { onConfirm(input.toDoubleOrNull() ?: 0.0) },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Accent)
+                ) { Text("Save", fontWeight = FontWeight.Bold) }
+            }
+        }
+    }
 }

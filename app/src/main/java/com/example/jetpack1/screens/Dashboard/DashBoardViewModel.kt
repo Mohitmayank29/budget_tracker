@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.jetpack1.Database.Table.BudgetTable
 import com.example.jetpack1.Database.Table.MonthlyIncomeTable
 import com.example.jetpack1.Database.Table.TransactionTable
+import com.example.jetpack1.common.SnackbarController
+import com.example.jetpack1.common.SnackbarDuration
+import com.example.jetpack1.common.SnackbarType
 import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TransactionType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +42,7 @@ class DashBoardViewModel  @Inject constructor(
     private  val repository: DashBoardRepository
 ) : ViewModel() {
     private val _selectedMonth = MutableStateFlow(YearMonth.now())
+    private var recentlyDeleted: TransactionTable? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     val uiState: StateFlow<UiState> = _selectedMonth.flatMapLatest { ym ->
@@ -66,24 +70,35 @@ class DashBoardViewModel  @Inject constructor(
         _selectedMonth.value = _selectedMonth.value.minusMonths(1)
     }
 
-    fun addTransaction(amount: Double, label: String, category: Category, type: TransactionType, date: LocalDate, yearMonth: YearMonth) {
-        viewModelScope.launch {
-            repository.addTransaction(
-                TransactionTable(
-                    amount = amount,
-                    label = label.ifBlank { category.label },
-                    category = category.name,
-                    type = type.name,
-                    date = date.toEpochDay(),
-                    year = yearMonth.year,
-                    month = yearMonth.monthValue
 
-                )
+    fun deleteTransaction(id: Int) = viewModelScope.launch { repository.deleteTransaction(id) }
+    fun deleteTransactionUndo(transcation : TransactionTable) = viewModelScope.launch {
+
+        viewModelScope.launch {
+
+            recentlyDeleted = transcation
+            repository.deleteTransaction(transcation.id)
+
+            SnackbarController.manager.showSnackbar(
+                message = "Transaction deleted",
+                type = SnackbarType.Warning,
+                actionLabel = "UNDO",
+                duration = SnackbarDuration.Long,
+                onAction = {
+                    restoreDeleted()
+                }
             )
         }
     }
+    private fun restoreDeleted() {
+        viewModelScope.launch {
+            recentlyDeleted?.let {
+                repository.insertTransaction(it)
+                recentlyDeleted = null
+            }
+        }
+    }
 
-    fun deleteTransaction(id: Int) = viewModelScope.launch { repository.deleteTransaction(id) }
 
     fun setBudget(category: Category, amount: Double) {
         val ym = _selectedMonth.value
