@@ -80,18 +80,12 @@ fun AddTransactionScreen(
                 val data = result.data
                 SnackbarController.manager.success("Added in $type")
                 Log.d("transcation1",data.toString())
-
                 navController.popBackStack()
-
             }
-
             is ApiResult.Error<*> -> {
                 val message = result.message
                 SnackbarController.manager.error(message)
-
-
             }
-
             else -> {}
         }
     }
@@ -133,7 +127,18 @@ fun AddTransactionScreen(
                             .weight(1f)
                             .clip(RoundedCornerShape(10.dp))
                             .background(bgColor)
-                            .clickable { type = t }
+                            .clickable {
+                                if( type != t) {
+                                    type = t
+                                     amount = ""
+                                     label = ""
+                                     dateText = ""
+                                     selectedDate = LocalDate.now()
+                                     selectedCategory  = Category.FOOD
+
+
+                                }
+                            }
                             .padding(vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -225,9 +230,6 @@ fun AddTransactionScreen(
                     }
                 }
             }
-            else{
-                // mkae that ki if income was select to koi categeory nhi jygi and i ncomebhi income ma ho
-            }
         }
         item {
 
@@ -235,14 +237,14 @@ fun AddTransactionScreen(
              CommonButton(text = "Add Transaction", onClick = {
                  val parsedAmount = amount.toDoubleOrNull() ?: return@CommonButton
                  val parsedDate = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
-                 val yearMonth = YearMonth.from(parsedDate) // ✅ FIX
+                 val yearMonth = YearMonth.from(parsedDate)
 
                  viewModel.submitaddeddata(
                      amount = parsedAmount,
                      description = label,
                      date = parsedDate,
                      type =type,
-                     category =selectedCategory,
+                     category = if (type == TransactionType.EXPENSE) selectedCategory else null,
                      yearMonth =yearMonth
                  )
                  Log.d("data","$label ,$type $selectedCategory")

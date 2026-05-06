@@ -30,7 +30,7 @@ class AddTranscationViewModel @Inject constructor(
         description:String,
         date: LocalDate,
         type: TransactionType,
-        category: Category,
+        category: Category?,
         yearMonth: YearMonth
 
     ){
@@ -39,8 +39,8 @@ class AddTranscationViewModel @Inject constructor(
             try {
                val addtranscation = TransactionTable(
                    amount = amount,
-                   label = category.label,
-                   category = category.name,
+                   label = if (type == TransactionType.EXPENSE) category!!.label else "Income",
+                   category = if (type == TransactionType.EXPENSE) category!!.name else "Income",
                    type = type.name,
                    date = date.toString(),
                    year = yearMonth.year,
@@ -48,11 +48,23 @@ class AddTranscationViewModel @Inject constructor(
                    description = description
 
                )
-                repository.addTransaction(addtranscation)
+                if(type == TransactionType.EXPENSE) {
+                    repository.addTransaction(addtranscation)
+                }else{
+                    repository.insertIncome(
+                        year = yearMonth.year,
+                        month =  yearMonth.monthValue,
+                        amount = amount,
+                        description = description,
+                        date = date.toString()
+
+
+                    )
+                }
                 _state.value = ApiResult.Success(addtranscation)
 
                 Log.d("transcation", addtranscation.toString())
-                Log.d("transcatio  n", "${type.name} ${category.label}  ${category.name}")
+                Log.d("transcatio  n", "${type.name} ${category?.label}  ${category?.name}")
 
             }catch (e: Exception){
                 _state.value = ApiResult.Error(e.message ?: "")

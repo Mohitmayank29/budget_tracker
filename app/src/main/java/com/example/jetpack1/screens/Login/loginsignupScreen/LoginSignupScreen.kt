@@ -68,7 +68,6 @@
 
                 }
                 is ApiResult.Error -> {
-                    val e = result.message
                     constants.CustomToast(result.message,1)
 
                 }

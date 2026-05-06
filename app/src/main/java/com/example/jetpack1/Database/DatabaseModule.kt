@@ -20,7 +20,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): BudgetDatabase {
         return Room.databaseBuilder(
-            context,
+            context.applicationContext,
             BudgetDatabase::class.java,
             "budget_database"
         ).fallbackToDestructiveMigration()

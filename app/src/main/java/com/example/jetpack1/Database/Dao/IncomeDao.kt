@@ -14,4 +14,7 @@ interface IncomeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(income: MonthlyIncomeTable)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(income: MonthlyIncomeTable)
 }

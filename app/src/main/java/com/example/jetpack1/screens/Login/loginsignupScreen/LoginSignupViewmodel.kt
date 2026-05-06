@@ -1,9 +1,7 @@
 package com.example.jetpack1.screens.Login.loginsignupScreen
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -104,9 +102,8 @@ class LoginSignupViewmodel  @Inject constructor(
 //            }
 //        }
 //    }
-private fun firebaseAuthWithGoogle(idToken: String) {
+   private fun firebaseAuthWithGoogle(idToken: String) {
     val credential = GoogleAuthProvider.getCredential(idToken, null)
-
     viewModelScope.launch {
         try {
             val result = auth.signInWithCredential(credential).await()
@@ -116,7 +113,6 @@ private fun firebaseAuthWithGoogle(idToken: String) {
                 if (task.isSuccessful && task.result != null) {
                     val token = task.result?.token
                     Log.d("TAG", "Token: $token")
-
                     viewModelScope.launch {
                         preferencesDataStore.setPreferenceDataStore(
                             PreferencesDataStore.usergeneratedtoekn,
@@ -132,27 +128,7 @@ private fun firebaseAuthWithGoogle(idToken: String) {
             Log.e("TAG", "Firebase Auth Error: ${e.message}", e)
             _state.value = ApiResult.Error(e.message ?: "Firebase Authentication Failed")
         }
-    }
-}
-//    @SuppressLint("SuspiciousIndentation")
-//    fun getlogin(email:String, password:String){
-//        try{
-//        _state.value = ApiResult.Loading()
-//             viewModelScope.launch {
-//                 val result = auth.signInWithEmailAndPassword(email,password).await()
-//
-//
-//                 _state.value = ApiResult.Success(result)
-//
-//
-//
-//             }
-//        }catch (ex: Exception){
-//           _state.value = ApiResult.Error(
-//               ex.message ?: "error"
-//           )
-//        }
-//
-//    }
 
+    }
+   }
 }

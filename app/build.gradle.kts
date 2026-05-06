@@ -45,6 +45,10 @@
         buildFeatures {
             compose = true
         }
+        kapt {
+            correctErrorTypes = true
+        }
+
     }
 
     dependencies {
@@ -79,12 +83,10 @@
         implementation("androidx.appcompat:appcompat:1.6.1")
         implementation("androidx.security:security-crypto:1.1.0-alpha06")
 //        implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.0.0"))
-        implementation("androidx.datastore:datastore-preferences:1.2.0-alpha01")
-        implementation("androidx.datastore:datastore-core-android:1.1.4")
         implementation("androidx.datastore:datastore-preferences:1.1.4")
         //hiltviewmodel
         implementation ("com.google.dagger:hilt-android:2.51.1")
-        ksp("com.google.dagger:hilt-compiler:2.51.1")
+        kapt("com.google.dagger:hilt-compiler:2.51.1")
         implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
         //FIRBASE
         implementation(platform("com.google.firebase:firebase-bom:34.10.0"))

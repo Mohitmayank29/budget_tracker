@@ -4,9 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(tableName = "income_table",primaryKeys = ["year", "month"])
-data class MonthlyIncomeTable(
-    @ColumnInfo (name = "year") val year: Int,
-    @ColumnInfo (name = "month") val month: Int,
-    @ColumnInfo (name = "amount") val amount: Double,
+    data class MonthlyIncomeTable(
+        @ColumnInfo (name = "year") val year: Int,
+        @ColumnInfo (name = "month") val month: Int,
+        @ColumnInfo (name = "amount") val amount: Double,
+        @ColumnInfo(name = "description") val description : String  ? = null,
+        @ColumnInfo(name = "date") val date : String ? =  null,
+
+
 
 )
