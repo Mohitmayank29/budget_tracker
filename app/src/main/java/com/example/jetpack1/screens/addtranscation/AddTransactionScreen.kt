@@ -51,21 +51,21 @@ fun AddTransactionScreen(
 ) {
     var amount by remember { mutableStateOf("") }
     var label by remember { mutableStateOf("") }
+    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
     var selectedCategory by remember { mutableStateOf(Category.FOOD) }
     var type by remember { mutableStateOf(TransactionType.EXPENSE) }
-    var dateText by remember { mutableStateOf("") }        // UI formatted
+    var dateText by remember { mutableStateOf(LocalDate.now().format(formatter)) }        // UI formatted
     var selectedDate by remember { mutableStateOf(LocalDate.now()) } // actual date
     val state = viewModel.state.collectAsState()
     val result = state.value
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
 
-            val selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+            selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
             dateText = selectedDate.format(formatter)
 
         },
@@ -236,7 +236,7 @@ fun AddTransactionScreen(
 
              CommonButton(text = "Add Transaction", onClick = {
                  val parsedAmount = amount.toDoubleOrNull() ?: return@CommonButton
-                 val parsedDate = runCatching { LocalDate.parse(dateText) }.getOrDefault(LocalDate.now())
+                 val parsedDate = selectedDate
                  val yearMonth = YearMonth.from(parsedDate)
 
                  viewModel.submitaddeddata(
@@ -247,7 +247,7 @@ fun AddTransactionScreen(
                      category = if (type == TransactionType.EXPENSE) selectedCategory else null,
                      yearMonth =yearMonth
                  )
-                 Log.d("data","$label ,$type $selectedCategory")
+                 Log.d("data","$label ,$type $selectedCategory, $selectedDate,$parsedDate")
              })
         }
     }

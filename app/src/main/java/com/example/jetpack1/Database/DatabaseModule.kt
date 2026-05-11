@@ -23,7 +23,7 @@ object DatabaseModule {
             context.applicationContext,
             BudgetDatabase::class.java,
             "budget_database"
-        ).fallbackToDestructiveMigration()
+        )/*.fallbackToDestructiveMigration()*/
             .build()
     }
 
