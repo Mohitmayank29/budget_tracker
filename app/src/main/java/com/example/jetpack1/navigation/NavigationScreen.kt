@@ -13,12 +13,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jetpack1.common.AppSnackbarHost
 import com.example.jetpack1.language.LanguageScreen
+import com.example.jetpack1.screens.AddBudget.BudgetScreen
 import com.example.jetpack1.screens.Dashboard.DashboardScreen
 import com.example.jetpack1.screens.Dashboard.NotificationsScreen
 import com.example.jetpack1.screens.Dashboard.ProfileScreen
 import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignUpScreen
 import com.example.jetpack1.screens.Login.login.LoginScreen
 import com.example.jetpack1.screens.Login.signup.RegisterScreen
+import com.example.jetpack1.screens.customize.CustomizeScreen
 import com.example.jetpack1.screens.splashScreen.SplashScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -67,6 +69,13 @@ fun NavigationScreen() {
             composable(navroute.language.route) {
                 LanguageScreen(navController)
             }
+            composable(navroute.addbudget.route) {
+                BudgetScreen(navController)
+            }
+            composable(navroute.customize.route) {
+                CustomizeScreen(navController)
+            }
+
         }
     }
 }

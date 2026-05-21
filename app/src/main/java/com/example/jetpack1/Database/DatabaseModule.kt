@@ -3,6 +3,7 @@ package com.example.jetpack1.Database
 import android.content.Context
 import androidx.room.Room
 import com.example.jetpack1.Database.Dao.BudgetDao
+import com.example.jetpack1.Database.Dao.CategoryDao
 import com.example.jetpack1.Database.Dao.IncomeDao
 import com.example.jetpack1.Database.Dao.TranscationDao
 import dagger.Module
@@ -38,5 +39,9 @@ object DatabaseModule {
     @Provides
     fun provideIncomeDao (db: BudgetDatabase): IncomeDao {
         return db.incomeDao()
+    }
+    @Provides
+    fun provideCategoryDao (db: BudgetDatabase): CategoryDao {
+        return db.categoryDao()
     }
 }

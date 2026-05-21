@@ -30,6 +30,10 @@ data class UiState(
     val income: Double = 0.0,
     val selectedMonth: YearMonth = YearMonth.now()
 ) {
+    val monthlyTransactions: List<TransactionTable>
+        get() = transactions.filter {
+            YearMonth.of(it.year, it.month) == selectedMonth
+        }
     val expenses: Double get() = transactions.filter { TransactionType.valueOf(it.type) == TransactionType.EXPENSE }.sumOf { it.amount }
     val balance: Double get() = income - expenses
     val expensesByCategory: Map<Category, Double> get() =

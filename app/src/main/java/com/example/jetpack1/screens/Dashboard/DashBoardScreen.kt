@@ -23,10 +23,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Addchart
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -81,8 +83,8 @@ import com.example.jetpack1.common.BottomNavigationBar
 import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TopBarType
 import com.example.jetpack1.enumclasses.TransactionType
+import com.example.jetpack1.screens.History.HistoryScreen
 import com.example.jetpack1.screens.addtranscation.AddTransactionScreen
-import com.example.jetpack1.screens.HistoryScreen
 import com.example.jetpack1.screens.MyPieChartScreen
 import com.example.jetpack1.screens.addtranscation.outlinedTextFieldColors
 import java.time.LocalDate
@@ -102,6 +104,11 @@ fun DashboardScreen(navController: NavController,viewModel: DashBoardViewModel =
         .currentBackStackEntryAsState()
         .value?.destination?.route
     Scaffold(
+        floatingActionButton = {
+            FabIcon(
+                { navController.navigate(navroute.addbudget.route) }
+            )
+        },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AnimatedContent(targetState = currentRoute, label = "") { route ->
@@ -196,7 +203,7 @@ fun HomeScreen(navController: NavController,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = {
-//                        navController.navigate()
+                        viewModel.prevMonth()
                     }) {
                         Text("‹", color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp, fontWeight = FontWeight.Light)
                     }
@@ -207,7 +214,9 @@ fun HomeScreen(navController: NavController,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        viewModel.nextMonth()
+                    }) {
                         Text("›", color = MaterialTheme.colorScheme.onBackground, fontSize = 24.sp, fontWeight = FontWeight.Light)
                     }
                 }
@@ -593,4 +602,12 @@ fun IncomeDialog(currentIncome: Double, onConfirm: (Double) -> Unit, onDismiss: 
             }
         }
     }
+}
+@Composable
+fun FabIcon(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        onClick = { onClick() },
+        icon = { Icon(Icons.Filled.Addchart, "Extended floating action button.") },
+        text = { Text(text = "Set Budget") },
+    )
 }

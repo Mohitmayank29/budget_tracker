@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.common.SnackbarController
