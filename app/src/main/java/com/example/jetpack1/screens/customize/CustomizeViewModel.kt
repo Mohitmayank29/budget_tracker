@@ -18,20 +18,41 @@ class CustomizeViewModel @Inject constructor(
   private val _state = MutableStateFlow<ApiResult<List<CategoryTable>>?>(null)
     val state : StateFlow<ApiResult<List<CategoryTable>>?> = _state
 
+    init {
+        getAllCategories()
+    }
+    private fun getAllCategories() {
+
+        viewModelScope.launch {
+
+            repository.getAllcategory().collect { list ->
+
+                _state.value = ApiResult.Success(list)
+            }
+        }
+    }
     fun insertcategory(category : CategoryTable){
         viewModelScope.launch {
 
             _state.value = ApiResult.Loading()
             try {
                 repository.insertcategory(category)
-                repository.getAllcategory().collect { list ->
-                    _state.value = ApiResult.Success(list)
-                }
             }
             catch (e: Exception) {
-                _state.value = ApiResult.Error(e.message ?: "Somethinbg went wrong")
+                _state.value = ApiResult.Error(e.message ?: "Somethinbg went Wrong!")
             }
         }
 
+    }
+    fun deletecategory(id:Int){
+        viewModelScope.launch {
+            _state.value = ApiResult.Loading()
+            try {
+                repository.deletecategory(id)
+
+            }catch (e: Exception){
+                _state.value = ApiResult.Error(e.message ?: "SomeThing Went Wrong!")
+            }
+        }
     }
 }

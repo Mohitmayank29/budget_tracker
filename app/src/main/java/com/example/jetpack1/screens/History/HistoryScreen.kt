@@ -36,8 +36,7 @@ fun HistoryScreen(
     contentpadding : PaddingValues,
     onDeleteTransaction: (Int) -> Unit
 ) {
-    val monthLabel = state.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
     Column(
         modifier = Modifier
             .fillMaxSize()

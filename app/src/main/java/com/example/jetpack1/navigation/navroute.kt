@@ -21,6 +21,7 @@ sealed class navroute(val route : String) {
        object AddTranscation : navroute("AddTranscation")
        object addbudget : navroute("Add Budgets")
        object customize : navroute("Customize As You Want")
+       object loader : navroute("Customize As You Want")
 
 
 }

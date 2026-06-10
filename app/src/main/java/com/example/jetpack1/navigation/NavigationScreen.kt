@@ -61,7 +61,7 @@ fun NavigationScreen() {
                 DashboardScreen(navController)
             }
             composable(navroute.Profile.route) {
-                ProfileScreen(navController)
+                CustomizeScreen(navController)
             }
             composable(navroute.notification.route) {
                 NotificationsScreen(navController)
