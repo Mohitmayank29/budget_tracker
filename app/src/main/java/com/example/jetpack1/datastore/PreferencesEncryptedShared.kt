@@ -7,6 +7,7 @@ import androidx.security.crypto.MasterKey
 object PreferencesEncryptedShared {
     const val commonStudentName = "commonStudentName"
     const val commonemail = "commonemail"
+    const val commonpassword = "commonpassword"
 
     var securePrefs: EncryptedSharedPreferences? = null
 

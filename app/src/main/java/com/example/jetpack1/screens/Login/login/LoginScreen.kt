@@ -62,6 +62,7 @@ fun LoginScreen(
     val result = state.value
     LaunchedEffect(Unit) {
           viewmodel.getPreferenceEncryptedShared(PreferencesEncryptedShared.commonemail).let { email = it.toString() }
+          viewmodel.getPreferenceEncryptedShared(PreferencesEncryptedShared.commonpassword).let { password = it.toString() }
     }
     LaunchedEffect(result) {
     when(result) {
@@ -74,7 +75,10 @@ fun LoginScreen(
             }
             SnackbarController.manager.showSnackbar(
                 "Login Successfully !!",
-                duration = SnackbarDuration.Long)
+                duration = SnackbarDuration.Long
+            )
+            viewmodel.setPreferenceDataStore(constants.isuserlogin,"1")
+            viewmodel.setPreferenceDataStore(PreferencesEncryptedShared.commonemail,email)
 
         }
 

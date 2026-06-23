@@ -52,7 +52,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hiltViewModel()) {
+fun     RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hiltViewModel()) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

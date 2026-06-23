@@ -30,6 +30,8 @@ class PreferencesDataStore @Inject constructor(@ApplicationContext private val  
         const val usergeneratedtoekn = "usergeneratedtoekn"
         const val signupemail = "signupemail"
         const val signuppassword = "usergeneratedtoekn"
+        const val prefferedlanguage  = "prefferedlanguage"
+
 
 
 
@@ -48,7 +50,6 @@ class PreferencesDataStore @Inject constructor(@ApplicationContext private val  
             .map { prefs -> prefs[stringPreferencesKey(key)] ?: "" }
     }
 
-    // ✅ Single reusable function to get value from key
     suspend fun getPreferenceDataString(key: String): String {
         return context.dataStore.data
             .map { prefs -> prefs[stringPreferencesKey(key)] ?: "" }

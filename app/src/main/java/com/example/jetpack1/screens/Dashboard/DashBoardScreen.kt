@@ -78,8 +78,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.Database.Table.TransactionTable
 import com.example.jetpack1.common.BottomNavigationBar
+import com.example.jetpack1.common.LanguageItem
+import com.example.jetpack1.common.LanguageSelectionDialog
+import com.example.jetpack1.datastore.PreferencesDataStore
 import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TopBarType
 import com.example.jetpack1.enumclasses.TransactionType
@@ -87,6 +91,7 @@ import com.example.jetpack1.screens.History.HistoryScreen
 import com.example.jetpack1.screens.addtranscation.AddTransactionScreen
 import com.example.jetpack1.screens.MyPieChartScreen
 import com.example.jetpack1.screens.addtranscation.outlinedTextFieldColors
+import com.google.firebase.database.core.Constants
 import java.time.LocalDate
 
 
@@ -165,6 +170,7 @@ fun HomeScreen(navController: NavController,
                contentpadding: PaddingValues ,
                viewModel: DashBoardViewModel,
 ) {
+    val userlogin = viewModel.getPreferenceDataStore(constants.isuserlogin)
     val state by viewModel.uiState.collectAsState()
     var showIncomeDialog by remember { mutableStateOf(false) }
     val sampleExpensesByCategory = mapOf(
@@ -176,6 +182,45 @@ fun HomeScreen(navController: NavController,
         Category.UTILITIES to 2000.0,
         Category.OTHER to 600.0
     )
+    var selectedLanguage by remember {
+        mutableStateOf<String?>(null)
+    }
+
+    var showDialog by remember {
+        mutableStateOf(true)
+    }
+    if (selectedLanguage != null) {
+        showDialog = false
+    }
+
+
+    if(userlogin.equals("1")) {
+
+        if (showDialog) {
+
+            LanguageSelectionDialog(
+                title = "Choose Language",
+                subTitle = "Select your preferred language",
+                description = "You can change this anytime from settings.",
+                selectedLanguage = selectedLanguage,
+                languages = listOf(
+                    LanguageItem("en", "English", "English"),
+                    LanguageItem("hi", "Hindi", "हिंदी"),
+                    LanguageItem("mr", "Marathi", "मराठी"),
+                    LanguageItem("gu", "Gujarati", "ગુજરાતી")
+                ),
+                onLanguageSelected = {
+                    selectedLanguage = it.id
+                },
+                onDismiss = {
+                    showDialog = false
+                },
+                onConfirm = {
+                    showDialog = false
+                }
+            )
+        }
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

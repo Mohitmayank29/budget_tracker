@@ -3,6 +3,7 @@ package com.example.jetpack1.screens.splashScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.datastore.PreferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.first
@@ -30,5 +31,12 @@ class SplashViewModel @Inject constructor(
         return auth.currentUser != null
     }
 
-
+    suspend fun isLanguageDialogShown(): Boolean {
+        return preferencesDataStore
+            .getPreferenceDataStore(
+                constants.LANGUAGE_DIALOG_SHOWN
+            )
+            .first()
+            .toBoolean()
+    }
 }

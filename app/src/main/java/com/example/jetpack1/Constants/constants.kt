@@ -21,6 +21,9 @@ import com.example.jetpack1.R
 object constants {
 
      val SomethingWentWrong = "Something Went Wrong"
+     const val isuserlogin  = "isuserlogin"
+    const val LANGUAGE_DIALOG_SHOWN = "language_dialog_shown"
+    const val savedLanguage = "saved_language"
 
     @Composable
     fun CustomToast(

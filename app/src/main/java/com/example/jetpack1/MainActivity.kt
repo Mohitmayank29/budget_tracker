@@ -2,38 +2,21 @@ package com.example.jetpack1
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.core.os.LocaleListCompat
-import java.util.Locale
-import androidx.lifecycle.lifecycleScope
-import com.example.jetpack1.languagedatastore.LanguageDataStore
+import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.navigation.NavigationScreen
+import com.example.jetpack1.screens.language.LocaleHelper
 import com.example.jetpack1.ui.theme.Jetpack1Theme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class  MainActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var languageDataStore: LanguageDataStore
     @SuppressLint("SuspiciousIndentation")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,17 +24,26 @@ class  MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Jetpack1Theme {
-                // A surface container using the 'background' color from the theme
                 Surface {
                     NavigationScreen()
                 }
             }
         }
     }
-    private fun applyLanguage(language: String) {
-        val locale = LocaleListCompat.forLanguageTags(language)
-        AppCompatDelegate.setApplicationLocales(locale)
-    }
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = newBase.getSharedPreferences(
+            "language_pref",
+            Context.MODE_PRIVATE
+        )
 
+        val language = prefs.getString(constants.savedLanguage, "en") ?: "en"
+
+        super.attachBaseContext(
+            LocaleHelper.setLocale(
+                newBase,
+                language
+            )
+        )
+    }
 }
 

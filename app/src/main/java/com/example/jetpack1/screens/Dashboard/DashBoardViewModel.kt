@@ -10,9 +10,11 @@ import com.example.jetpack1.Database.Table.TransactionTable
 import com.example.jetpack1.common.SnackbarController
 import com.example.jetpack1.common.SnackbarDuration
 import com.example.jetpack1.common.SnackbarType
+import com.example.jetpack1.datastore.PreferencesDataStore
 import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TransactionType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,7 @@ data class UiState(
     val transactions: List<TransactionTable> = emptyList(),
     val budgets: List<BudgetTable> = emptyList(),
     val income: Double = 0.0,
-    val selectedMonth: YearMonth = YearMonth.now()
+    val selectedMonth: YearMonth = YearMonth.now(),
 ) {
     val monthlyTransactions: List<TransactionTable>
         get() = transactions.filter {
@@ -43,7 +45,9 @@ data class UiState(
 }
 @HiltViewModel
 class DashBoardViewModel  @Inject constructor(
-    private  val repository: DashBoardRepository
+    private  val repository: DashBoardRepository,
+    private  val preferencesDataStore: PreferencesDataStore
+
 ) : ViewModel() {
     private val _selectedMonth = MutableStateFlow(YearMonth.now())
     private var recentlyDeleted: TransactionTable? = null
@@ -115,5 +119,12 @@ class DashBoardViewModel  @Inject constructor(
         val ym = _selectedMonth.value
         viewModelScope.launch { repository.upsertIncome(ym.year, ym.monthValue, amount) }
     }
+    suspend fun setPreferenceDataStore(key: String, value: String) {
+        return preferencesDataStore.setPreferenceDataStore(key, value)
 
+    }
+
+    fun getPreferenceDataStore(key: String): Flow<String> {
+        return preferencesDataStore.getPreferenceDataStore(key)
+    }
 }

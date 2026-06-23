@@ -110,12 +110,12 @@ fun DashboardTopBar(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onMenuClick) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu"
-                            )
-                        }
+//                        IconButton(onClick = onMenuClick) {
+//                            Icon(
+//                                imageVector = Icons.Default.Menu,
+//                                contentDescription = "Menu"
+//                            )
+//                        }
 
                     },
                     actions = {

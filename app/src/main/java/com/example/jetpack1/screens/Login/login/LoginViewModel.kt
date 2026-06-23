@@ -43,4 +43,8 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+    suspend fun setPreferenceDataStore(key: String, value: String) {
+        return preferencesDataStore.setPreferenceDataStore(key, value)
+
+    }
 }

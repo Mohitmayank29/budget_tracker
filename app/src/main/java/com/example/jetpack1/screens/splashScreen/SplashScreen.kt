@@ -42,6 +42,7 @@ import com.example.jetpack1.R
 import com.example.jetpack1.navigation.navroute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SplashScreen(navController: NavController,splashViewModel: SplashViewModel = hiltViewModel()) {
@@ -74,7 +75,7 @@ fun SplashScreen(navController: NavController,splashViewModel: SplashViewModel =
         )
         val isloggedIn  =  splashViewModel.isUserLoggedIn()
 
-        delay(800)
+        delay(800.milliseconds)
         if(isloggedIn) {
             navController.navigate(navroute.Dashboard.route) {
                 popUpTo(navroute.Splash.route) { inclusive = true }

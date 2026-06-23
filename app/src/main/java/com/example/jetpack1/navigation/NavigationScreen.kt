@@ -2,21 +2,18 @@ package com.example.jetpack1.navigation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jetpack1.common.AppSnackbarHost
-import com.example.jetpack1.language.LanguageScreen
 import com.example.jetpack1.screens.AddBudget.BudgetScreen
 import com.example.jetpack1.screens.Dashboard.DashboardScreen
 import com.example.jetpack1.screens.Dashboard.NotificationsScreen
-import com.example.jetpack1.screens.Dashboard.ProfileScreen
+import com.example.jetpack1.screens.language.LanguageScreen
 import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignUpScreen
 import com.example.jetpack1.screens.Login.login.LoginScreen
 import com.example.jetpack1.screens.Login.signup.RegisterScreen
@@ -32,7 +29,7 @@ fun NavigationScreen() {
             AppSnackbarHost()
         }
     ) {paddingValues ->
-        NavHost(navController, startDestination = navroute.Splash.route) {
+        NavHost(navController, startDestination = navroute.language.route) {
             composable(navroute.Splash.route) {
                 SplashScreen(navController)
             }
