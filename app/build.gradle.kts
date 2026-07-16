@@ -90,6 +90,7 @@
         implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
         //FIRBASE
         implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+        implementation("com.google.firebase:firebase-analytics")
 //        implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-auth")
         // Also add the dependencies for the Credential Manager libraries and specify their versions

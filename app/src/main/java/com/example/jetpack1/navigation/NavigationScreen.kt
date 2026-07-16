@@ -18,6 +18,7 @@ import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignUpScreen
 import com.example.jetpack1.screens.Login.login.LoginScreen
 import com.example.jetpack1.screens.Login.signup.RegisterScreen
 import com.example.jetpack1.screens.customize.CustomizeScreen
+import com.example.jetpack1.screens.profileScreen.ProfileScreen
 import com.example.jetpack1.screens.splashScreen.SplashScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -58,7 +59,7 @@ fun NavigationScreen() {
                 DashboardScreen(navController)
             }
             composable(navroute.Profile.route) {
-                CustomizeScreen(navController)
+                ProfileScreen(navController)
             }
             composable(navroute.notification.route) {
                 NotificationsScreen(navController)

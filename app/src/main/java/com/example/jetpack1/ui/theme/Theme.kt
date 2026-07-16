@@ -13,8 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 
-
-val Background = Color(0xFF0A0A0F)
 val Surface1 = Color(0xFF12121A)
 val Surface2 = Color(0xFF1A1A26)
 val CardBackground = Color(0x0AFFFFFF)
@@ -22,33 +20,67 @@ val Accent = Color(0xFF6366F1)
 val AccentSecondary = Color(0xFF8B5CF6)
 val PositiveGreen = Color(0xFF4ECDC4)
 val NegativeRed = Color(0xFFFF6B6B)
-val TextPrimary = Color(0xFFE8E8F0)
-val TextSecondary = Color(0xFF888899)
 val TextMuted = Color(0xFF444455)
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
+val Primary = Color(0xFF16A34A)          // Green
+val PrimaryContainer = Color(0xFFDCFCE7)
 
-    background = Color.Black,
-    surface = Color.Black,
-    onBackground = Color.White,
-    onSurface = Color.White,
-    onPrimaryContainer = Color.White
+val Secondary = Color(0xFF0EA5E9)        // Blue
+
+val Background = Color(0xFFF8FAFC)
+val Surface = Color.White
+val SurfaceVariant = Color(0xFFF1F5F9)
+
+val Income = Color(0xFF22C55E)
+val Expense = Color(0xFFEF4444)
+val Savings = Color(0xFF2563EB)
+
+val TextPrimary = Color(0xFF0F172A)
+val TextSecondary = Color(0xFF64748B)
+val DarkPrimary = Color(0xFF4ADE80)
+
+val DarkBackground = Color(0xFF0F172A)
+val DarkSurface = Color(0xFF1E293B)
+val DarkSurfaceVariant = Color(0xFF334155)
+
+val DarkIncome = Color(0xFF4ADE80)
+val DarkExpense = Color(0xFFF87171)
+
+val DarkText = Color.White
+val DarkTextSecondary = Color(0xFFCBD5E1)
+private val DarkColorScheme = darkColorScheme(
+    primary = DarkPrimary,
+    onPrimary = Color.Black,
+
+    secondary = Secondary,
+    onSecondary = Color.Black,
+
+    background = DarkBackground,
+    onBackground = DarkText,
+
+    surface = DarkSurface,
+    onSurface = DarkText,
+
+    surfaceVariant = DarkSurfaceVariant,
+
+    error = DarkExpense
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = Primary,
     onPrimary = Color.White,
+
+    secondary = Secondary,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    onPrimaryContainer = Color.Black
+
+    background = Background,
+    onBackground = TextPrimary,
+
+    surface = Surface,
+    onSurface = TextPrimary,
+
+    surfaceVariant = SurfaceVariant,
+
+    error = Expense
 )
 
 @Composable
@@ -71,27 +103,6 @@ fun Jetpack1Theme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
-    )
-}
-
-// Colors
-
-
-val ColorScheme = darkColorScheme(
-    primary = Accent,
-    secondary = AccentSecondary,
-    background = Background,
-    surface = Surface1,
-    onBackground = TextPrimary,
-    onSurface = TextPrimary,
-    error = NegativeRed
-)
-
-@Composable
-fun BudgetTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = ColorScheme,
         content = content
     )
 }
