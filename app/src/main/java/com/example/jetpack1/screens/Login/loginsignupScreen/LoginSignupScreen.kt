@@ -24,7 +24,6 @@
     import androidx.compose.material3.OutlinedButton
     import androidx.compose.material3.Text
     import androidx.compose.runtime.Composable
-    import androidx.compose.runtime.LaunchedEffect
     import androidx.compose.runtime.collectAsState
     import androidx.compose.ui.Alignment
     import androidx.compose.ui.Modifier
@@ -43,8 +42,6 @@
     import com.example.jetpack1.R
     import com.example.jetpack1.data.ApiResult
     import com.example.jetpack1.navigation.navroute
-    import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
-    import com.google.android.gms.common.internal.Constants
 
     @Composable
     fun LoginSignUpScreen(
@@ -103,7 +100,7 @@
 
 
                 Image(
-                    painter = painterResource(id = R.drawable.logo1),
+                    painter = painterResource(id = R.drawable.logorbg),
                     contentDescription = null,
                     modifier = Modifier
                         .size(300.dp)

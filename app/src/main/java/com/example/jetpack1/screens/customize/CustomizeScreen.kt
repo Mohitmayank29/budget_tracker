@@ -167,47 +167,50 @@ fun CustomizeScreen(navController: NavController,viewModel: CustomizeViewModel =
         )
     }
 
-    Column(
+    Box(
         Modifier
             .fillMaxSize()
             .background(Background)
             .navigationBarsPadding()
     ) {
-        DashboardTopBar(
-            title = "Customize As You Want",
-            type = TopBarType.BACK_ONLY,
-            scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
-            onbackclick = {
-                navController.popBackStack()
+        Column(
+            Modifier
+                .fillMaxSize()
+        ) {
+            DashboardTopBar(
+                title = "Customize As You Want",
+                type = TopBarType.BACK_ONLY,
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+                onbackclick = {
+                    navController.popBackStack()
+                }
+            )
+
+            if (state is ApiResult.Success) {
+                val resultdata = state.data ?: emptyList()
+
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)
+                ) {
+                    items(resultdata) { category ->
+                        categoryrow(category)
+                    }
+                }
             }
-
-        )
-
+        }
         FloatingActionButton(
             onClick = {
                 showDialog = true
-            }
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd)
 
         ) {
-
             Text("+")
         }
-
-      if(  state is ApiResult.Success) {
-          val resultdata = state.data ?: emptyList()
-
-          LazyColumn(
-              Modifier
-                  .fillMaxSize()
-                  .padding(10.dp)
-          ) {
-              items(resultdata.size) { index ->
-                  categoryrow(
-                      category = resultdata[index]
-                  )
-              }
-          }
-      }
     }
 }
 @Composable

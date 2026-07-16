@@ -201,6 +201,19 @@ fun DashboardTopBar(
                 },
             )
         }
+        TopBarType.TITLE_ONLY -> {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.SemiBold,
+                        color = NegativeRed,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                )
+        }
     }
 }
 

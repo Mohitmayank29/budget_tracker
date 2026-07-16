@@ -38,17 +38,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.jetpack1.Constants.constants
+import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.DashboardTopBar
 import com.example.jetpack1.common.LanguageItem
+import com.example.jetpack1.enumclasses.TopBarType
+import com.example.jetpack1.navigation.navroute
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 
@@ -64,19 +70,23 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
         LanguageItem("pa", "Punjabi", "ਪੰਜਾਬੀ")
     )
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current // Add this
 
-    // Get saved language from DataStore
+    val currentLocale = configuration.locales[0]?.language ?: "en"
     val savedLanguage = viewModel.getPreferenceDataStore(constants.savedLanguage)
         .collectAsStateWithLifecycle(initialValue = "en")
+    val currentLanguageName = languages.find { it.id == currentLocale }?.name ?: "English"
 
     var selectedLanguage by remember {
         mutableStateOf("en")
     }
 
-    // Update selected language when saved language changes
     LaunchedEffect(savedLanguage.value) {
         if (savedLanguage.value.isNotEmpty()) {
             selectedLanguage = savedLanguage.value
+        }
+        else{
+            selectedLanguage = currentLocale
         }
     }
 
@@ -86,16 +96,19 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
             .background(Color.White)
             .navigationBarsPadding()
     ) {
+        val comefromsetting : String = "1"
         DashboardTopBar(
             title = "Language",
             scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
                 rememberTopAppBarState()
             ),
-            onbackclick = { navController.popBackStack() }
+            type = if(comefromsetting.equals("1",true)) TopBarType.BACK_ONLY else TopBarType.TITLE_ONLY,
+            onbackclick = { navController.popBackStack()}
         )
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f)
+                .fillMaxWidth()
                 .padding(10.dp)
                 .padding(horizontal = 16.dp)
         ) {
@@ -103,7 +116,7 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
-                text = "Select Your Preferred Language",
+                text = stringResource(id = R.string.select_language),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
@@ -111,6 +124,13 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
 
             Spacer(modifier = Modifier.height(height = 4.dp))
 
+            Text(
+                text = "Current language: $currentLanguageName",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(height = 4.dp))
             Text(
                 text = "You can change this later from settings.",
                 style = MaterialTheme.typography.bodyMedium,
@@ -125,6 +145,7 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
                     LanguageItemCard(
                         language = language,
                         isSelected = selectedLanguage == language.id,
+                        isCurrentLanguage = currentLocale == language.id,
                         onSelect = {
                             selectedLanguage = language.id
                         }
@@ -132,23 +153,27 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-
-            Column(
-                Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CommonButton(
-                    text = "Save Language",
-                    onClick = {
-                        // Save to both DataStore and SharedPreferences
-                        viewModel.saveLanguage(
-                            context = context,
-                            languageCode = selectedLanguage
-                        )
+        }
+        Column(
+            Modifier.fillMaxWidth()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CommonButton(
+                text = stringResource(id = R.string.save_language),
+                onClick = {
+                    viewModel.saveLanguage(
+                        context = context,
+                        languageCode = selectedLanguage
+                    )
+                    navController.navigate(navroute.Dashboard.route) {
+                        popUpTo(navroute.language.route) {
+                            inclusive = true
+                        }
                     }
-                )
-            }
+                }
+            )
         }
     }
 }
@@ -157,7 +182,8 @@ fun LanguageScreen(navController: NavController, viewModel: LanguageViewModel = 
 fun LanguageItemCard(
     language: LanguageItem,
     isSelected: Boolean,
-    onSelect: () -> Unit
+    onSelect: () -> Unit,
+    isCurrentLanguage: Boolean = false
 ) {
     ElevatedCard(
         modifier = Modifier
@@ -187,7 +213,11 @@ fun LanguageItemCard(
                     Text(
                         text = language.nativeName.first().toString(),
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = when {
+                            isSelected || isCurrentLanguage -> Color.White
+                            else -> MaterialTheme.colorScheme.onSurface
+                        }
                     )
                 }
             }
@@ -200,11 +230,15 @@ fun LanguageItemCard(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                Text(
-                    text = language.nativeName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (isCurrentLanguage && !isSelected) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "(Current)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 10.sp
+                    )
+                }
             }
 
             RadioButton(
@@ -213,4 +247,9 @@ fun LanguageItemCard(
             )
         }
     }
+}
+@Preview
+@Composable
+private fun PreviewLanguageScreen() {
+    LanguageScreen(navController = NavController(LocalContext.current))
 }

@@ -24,7 +24,8 @@ object DatabaseModule {
             context.applicationContext,
             BudgetDatabase::class.java,
             "budget_database"
-        ).build()
+        ).addMigrations()
+            .build()
     }
 
     @Provides

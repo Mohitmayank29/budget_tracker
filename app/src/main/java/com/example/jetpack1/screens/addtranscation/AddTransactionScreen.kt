@@ -26,7 +26,6 @@ import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.common.SnackbarController
 import com.example.jetpack1.data.ApiResult
-import com.example.jetpack1.enumclasses.Category
 import com.example.jetpack1.enumclasses.TransactionType
 import com.example.jetpack1.ui.theme.Accent
 import com.example.jetpack1.ui.theme.NegativeRed
@@ -37,6 +36,7 @@ import java.time.LocalDate
 import android.app.DatePickerDialog
 import android.util.Log
 import androidx.compose.ui.platform.LocalContext
+import com.example.jetpack1.Database.Table.CategoryTable
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,15 +51,20 @@ fun AddTransactionScreen(
     var amount by remember { mutableStateOf("") }
     var label by remember { mutableStateOf("") }
     val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
-    var selectedCategory by remember { mutableStateOf(Category.FOOD) }
+    var selectedCategory by remember {
+        mutableStateOf<CategoryTable?>(null)
+    }
+    val categoryList by viewModel.category.collectAsState()
     var type by remember { mutableStateOf(TransactionType.EXPENSE) }
-    var dateText by remember { mutableStateOf(LocalDate.now().format(formatter)) }        // UI formatted
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) } // actual date
+    var dateText by remember { mutableStateOf(LocalDate.now().format(formatter)) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val state = viewModel.state.collectAsState()
     val result = state.value
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-
+    val filteredCategories by remember(type, categoryList) {
+        mutableStateOf(categoryList?.filter { it.type == type } ?: emptyList())
+    }
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
@@ -133,7 +138,7 @@ fun AddTransactionScreen(
                                      label = ""
                                      dateText = ""
                                      selectedDate = LocalDate.now()
-                                     selectedCategory  = Category.FOOD
+                                     selectedCategory?.label.toString()
 
 
                                 }
@@ -182,7 +187,7 @@ fun AddTransactionScreen(
             )
         }
         item {
-            if (type == TransactionType.EXPENSE) {
+            /*if (type == TransactionType.EXPENSE) {*/
                 Spacer(Modifier.height(24.dp))
                 InputLabel("Category")
                 Spacer(Modifier.height(12.dp))
@@ -195,9 +200,9 @@ fun AddTransactionScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(Category.entries) { cat ->
-                        val isSelected = selectedCategory == cat
-                        val catColor = Color(cat.colorHex)
+                    items( items = filteredCategories , key = { it.id }) { cat ->
+                        val isSelected = selectedCategory?.id == cat.id
+                        val catColor = Color(cat.colorHex.toInt())
                         Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(14.dp))
@@ -228,7 +233,7 @@ fun AddTransactionScreen(
                         }
                     }
                 }
-            }
+          /*}*/
         }
         item {
 

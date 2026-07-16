@@ -8,36 +8,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.jetpack1.R
 import com.example.jetpack1.navigation.navroute
 import kotlinx.coroutines.delay
@@ -77,8 +61,14 @@ fun SplashScreen(navController: NavController,splashViewModel: SplashViewModel =
 
         delay(800.milliseconds)
         if(isloggedIn) {
-            navController.navigate(navroute.Dashboard.route) {
-                popUpTo(navroute.Splash.route) { inclusive = true }
+            if(/*!*/splashViewModel.isLanguageDialogShown()) {
+                navController.navigate(navroute.language.route) {
+                    popUpTo(navroute.Splash.route) { inclusive = true }
+                }
+            }else{
+                navController.navigate(navroute.Dashboard.route) {
+                    popUpTo(navroute.Splash.route) { inclusive = true }
+                }
             }
         }else{
             navController.navigate(navroute.loginsignup.route){
@@ -110,7 +100,7 @@ fun SplashScreen(navController: NavController,splashViewModel: SplashViewModel =
                 )
         )
         Image(
-            painter = painterResource(id = R.drawable.logo1),
+            painter = painterResource(id = R.drawable.logorbg),
             contentDescription = "Logo",
             modifier = Modifier
                 .align(Alignment.Center)

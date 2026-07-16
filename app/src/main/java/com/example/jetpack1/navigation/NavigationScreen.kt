@@ -29,7 +29,7 @@ fun NavigationScreen() {
             AppSnackbarHost()
         }
     ) {paddingValues ->
-        NavHost(navController, startDestination = navroute.language.route) {
+        NavHost(navController, startDestination = navroute.Splash.route) {
             composable(navroute.Splash.route) {
                 SplashScreen(navController)
             }

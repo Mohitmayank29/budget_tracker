@@ -1,7 +1,6 @@
 package com.example.jetpack1.screens.Login.signup
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,10 +35,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.jetpack1.Constants.constants
 import com.example.jetpack1.R
 import com.example.jetpack1.common.CommonButton
 import com.example.jetpack1.common.CommonOutlinedTextField
@@ -49,7 +45,6 @@ import com.example.jetpack1.data.ApiResult
 import com.example.jetpack1.datastore.PreferencesEncryptedShared
 import com.example.jetpack1.navigation.navroute
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun     RegisterScreen(navController: NavController,viewModel: SignUpViewModel = hiltViewModel()) {
@@ -120,7 +115,7 @@ fun     RegisterScreen(navController: NavController,viewModel: SignUpViewModel =
 
             // 🔥 LOGO
             Image(
-                painter = painterResource(R.drawable.logo1),
+                painter = painterResource(R.drawable.logorbg),
                 contentDescription = null,
                 modifier = Modifier
                     .size(200.dp)

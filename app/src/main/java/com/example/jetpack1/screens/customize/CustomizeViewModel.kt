@@ -1,5 +1,6 @@
 package com.example.jetpack1.screens.customize
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpack1.Database.Table.CategoryTable
@@ -26,6 +27,7 @@ class CustomizeViewModel @Inject constructor(
         viewModelScope.launch {
 
             repository.getAllcategory().collect { list ->
+                Log.d("CATEGORY", "Size = ${list.size}")
 
                 _state.value = ApiResult.Success(list)
             }
@@ -36,7 +38,9 @@ class CustomizeViewModel @Inject constructor(
 
             _state.value = ApiResult.Loading()
             try {
+                Log.d("CATEGORY", "Before Insert")
                 repository.insertcategory(category)
+                Log.d("CATEGORY", "After Insert")
             }
             catch (e: Exception) {
                 _state.value = ApiResult.Error(e.message ?: "Somethinbg went Wrong!")

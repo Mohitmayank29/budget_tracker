@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.Preferences
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jetpack1.Constants.constants
@@ -44,10 +43,8 @@ import com.example.jetpack1.common.CommonOutlinedTextField
 import com.example.jetpack1.common.SnackbarController
 import com.example.jetpack1.common.SnackbarDuration
 import com.example.jetpack1.data.ApiResult
-import com.example.jetpack1.datastore.PreferencesDataStore
 import com.example.jetpack1.datastore.PreferencesEncryptedShared
 import com.example.jetpack1.navigation.navroute
-import com.example.jetpack1.screens.Login.loginsignupScreen.LoginSignupViewmodel
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -120,7 +117,7 @@ fun LoginScreen(
         ) {
 
             Image(
-                painter = painterResource(R.drawable.logo1),
+                painter = painterResource(R.drawable.logorbg),
                 contentDescription = null,
                 modifier = Modifier
                     .size(200.dp)
